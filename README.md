@@ -1,40 +1,38 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## OneClickSUIDeFi: Streamline Your DeFi Experience on SUI
 
-## Getting Started
+Tagline: "OneClickSUIDeFi: A drag and drop Sui Defi aggregator that allows you to chain together complex transactions and execute them at the same time , build strategies and execute them across SUI's Defi ecosystem"
 
-First, run the development server:
+Description: OneClickSUIDeFi is a platform that allows users to easily connect using SUIConnect, build strategies and navigate the SUI Defi space seamlessly. It enables users to aggregate and batch multiple transactions into a single transaction across different Defi protocols on SUI, currently supporting  Kriya and Navixprotocol .
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Below is what users can do on our platform :
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Combine DeFi protocols to build strategies
+2. a multi functional DeFi aggregation protocol that allows a user to perform transactions from our easy to use interface.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Track :
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Primary track - DeFi
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+*Sponsored by [GSR](https://www.gsr.io/) - 1st place prize, [dWallet](https://dwallet.io/) - 2nd place prize, [Supra](https://supra.com/) - 3rd place prize, [ZettaBlock](https://www.zettablock.com/) - 3rd place prize*
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+DeFi on Sui is booming! Build the next generation of DeFi apps utilizing Sui’s unique architecture and powerful primitives, like [Programmable Transaction Blocks](https://blog.sui.io/programmable-transaction-blocks-explained/). Whether it is yield aggregation, trading bot infrastructure, liquidity management dashboards, or something entirely different, we’re eager to see what you will build.
 
-## Learn More
+Track Specific Resources:
 
-To learn more about Next.js, take a look at the following resources:
+- [Dacade](https://dacade.org/communities/sui/challenges/19885730-fb83-477a-b95b-4ab265b61438): Learn how to build a liquidity pool with DeepBook and frontend incorporating zklogin
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technology track - zklogin or multichain
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Features:
 
-## Deploy on Vercel
+1. **Easy User Onboarding**:A Defi tool that would help new users onboard to the SUI blockchain by easily utilising different defi tools across the SUI ecosystem.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Multi-Protocol Transaction Aggregation**: Users can aggregate and batch multiple types of transactions like swapping , add liquidity into a single transaction, reducing gas fees and streamlining their Defi experience thereby helping them to build defi strategies.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+3. **Currently Supported Defi Protocols**: OneClickSUIDeFi currently supports Navixprotocol , KRiya, with plans to expand to additional protocols in the future.
+
+4. **Seamless Navigation**: The platform provides a user-friendly interface that allows users to easily navigate the SUI Defi space, making it accessible to a wider audience.
+
+5. **Scalability**: OneClickSUIDeFi is designed to handle multiple transactions and users, ensuring a smooth and efficient experience for all users.
+
+By using OneClickSUIDeFi, users can enjoy a more streamlined and efficient Defi experience on SUI, with the convenience of connecting using their email addresses and aggregating multiple transactions across multiple defi protocols into a single transaction.
