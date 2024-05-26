@@ -22,7 +22,7 @@ Below is what users can do on our platform :
 
 ### Primary track - DeFi
 
-DeFi on Sui is booming! Build the next generation of DeFi apps utilizing Sui’s unique architecture and powerful primitives, like [Programmable Transaction Blocks](https://blog.sui.io/programmable-transaction-blocks-explained/). Whether it is yield aggregation, trading bot infrastructure, liquidity management dashboards, or something entirely different, we’re eager to see what you will build.
+DeFi on Sui is booming! We are Build the next generation of DeFi apps utilizing Sui’s unique architecture and powerful primitives, like [Programmable Transaction Blocks].
 
 
 ## Technology track - zklogin 
