@@ -24,6 +24,12 @@ import { WalletProvider, useAccounts, useSignAndExecuteTransaction, useSignTrans
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {txBuild, estimateGasFee, getSmartRouting} from "@flowx-pkg/ts-sdk";
+import { getFullnodeUrl } from "../constants/constants";
+
+import { TransactionBlock } from "@mysten/sui.js/transactions";
+import { Dex } from "kriya-dex-sdk";
+import { getPoolByName } from "../constants/constants";
+import { Pool, PoolConfig } from "navi-sdk/dist/types";
 
 const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange, setBatchActions }) => {
   const x = useMotionValue(0);
@@ -61,7 +67,6 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   const [lockedBlocks, setLockedBlocks] = useState([]);
 
   const abortQuerySmartRef = useRef(new AbortController());
-
   const handleLockAction = () => {
     const newLockedBlock = {
       actionName: currentActionName,
@@ -218,6 +223,45 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     } else if (currentProtocolName === "KRIYADEX") {
       try {
 
+        const amountinstring = sellAmount.toString();
+        console.log(selectedTokenFrom.type,selectedTokenTo.type, true,"sd");
+        console.log(`${selectedTokenFrom.symbol}-${selectedTokenTo.symbol}`,"pool");
+
+    const txb: any = new TransactionBlock();
+    const kriyadex = new Dex("https://fullnode.mainnet.sui.io:443");
+    console.log(kriyadex,"kriyaddex")
+    const to_swap_amount = 1 * 10 ** 9;
+    const pool = getPoolByName(`${selectedTokenFrom.symbol}-${selectedTokenTo.symbol}`);
+    const justswap =  await kriyadex.swap(pool, selectedTokenFrom.type, txb.pure(sellAmount), txb.object(selectedTokenFrom.symbol), txb.pure(10 ** 9), txb);
+    
+    console.log(justswap);
+
+    const swapcall = await txb.moveCall({
+      target: "0xa0eba10b173538c8fecca1dff298e488402cc9ff374f8a12ca7758eebe830b66::spot_dex::swap_token_x",
+      arguments: [
+          txb.object(pool.objectId),
+          txb.object(selectedTokenFrom.symbol),
+          txb.pure(amountinstring),
+          txb.pure(10 ** 9),
+      ],
+      typeArguments: [
+          pool.tokenXType,
+          pool.tokenYType,
+      ],
+      });
+
+
+      signAndExecuteTransaction(
+        {
+          transaction: txb,
+          chain: 'sui:mainnet',
+        },
+        {
+          onSuccess: (result) => {
+            console.log('executed transaction', result);
+          },
+        },
+      );
 
       } catch (error) {
         console.error('Error during swap:', error);
@@ -245,25 +289,26 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       const tx = await txBuild(paths,slippage,amountinstring,amountOutDev,selectedTokenFrom.type,wallet,pathsAmountOut);
       console.log(tx,"txBuild returns me this >>");
       tx.setSender(wallet!)
-      const txnbytes = (await tx.build(suiclient)).toString();
 
-      const { bytes, signature, reportTransactionEffects } = await signTransaction({
-        transaction: txnbytes,
-        chain: 'sui:mainnet',
-      });
 
-      const executeResult = await suiclient.executeTransactionBlock({
-        transactionBlock: bytes,
-        signature,
-        options: {
-          showRawEffects: true,
-        },
-      });
+
+      // const { bytes, signature, reportTransactionEffects } = await signTransaction({
+      //   transaction: tx,
+      //   chain: 'sui:mainnet',
+      // });
+
+      // const executeResult = await suiclient.executeTransactionBlock({
+      //   transactionBlock: bytes,
+      //   signature,
+      //   options: {
+      //     showRawEffects: true,
+      //   },
+      // });
 
       // Always report transaction effects to the wallet after execution
       // reportTransactionEffects(result.rawEffects!);
 
-      console.log(executeResult);
+      // console.log(executeResult);
 
       // signAndExecuteTransaction(
       //   {
@@ -271,7 +316,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       //     chain: 'sui:devnet',
       //   },
       // );
-    }
+    } 
   };
 
   useEffect(() => {

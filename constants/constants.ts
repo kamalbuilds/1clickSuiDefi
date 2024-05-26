@@ -20,6 +20,75 @@ export const ProtocolNames = {
   TYPUS: 'TYPUS'
 };
 
+
+export interface Pool {
+  objectId: string;
+  tokenXType: string;
+  tokenYType: string;
+  isStable?: boolean;
+}
+
+const pools: { [key: string]: Pool } = {
+  "WUSDC-SUI": {
+    objectId: "0x5af4976b871fa1813362f352fa4cada3883a96191bb7212db1bd5d13685ae305",
+    tokenXType: "wUSDC",
+    tokenYType: "SUI"
+  },
+  "WUSDCe-WUSDTe": {
+    objectId: "0xd0086b7713e0487bbf5bb4a1e30a000794e570590a6041155cdbebee3cb1cb77",
+    tokenXType: "wUSDCe",
+    tokenYType: "wUSDTe", 
+    isStable: true
+  },
+  "WETH-WUSDCe": {
+    objectId: "0x43ca1a6de20d7feabcaa460ac3798a6fdc754d3a83b49dff93221612c1370dcc",
+    tokenXType: "WETH",
+    tokenYType: "wUSDCe"
+  },
+  "USDCbnb-SUI": {
+    objectId: "0x517ee525c34fdfb2240342bd43fc07e1ec253c2442a7edd2482e6973700c6ef5",
+    tokenXType: "USDCbnb",
+    tokenYType: "SUI"
+  },
+  "CUSDCe-CUSDTe": {
+    objectId: "0x1a32f76a27f49ba590ffebfd906bd4d6733e67090c5aec9bdd50d2c34e5db763",
+    tokenXType: "cUSDCe",
+    tokenYType: "cUSDTe"
+  },
+  "CUSDCe-SUI": {
+    objectId: "0x074c421ceea5db8c393d4b5520d612782ccf10b51856d844d998a3fbc4896170",
+    tokenXType: "cUSDCe",
+    tokenYType: "SUI"
+  },
+  "BUCK-SUI": {
+    objectId: "0x3c334f9d1b969767007d26bc886786f9f197ffb14771f7903cd8772c46d08dea",
+    tokenXType: "BUCK",
+    tokenYType: "SUI"
+  },
+  "USDC-BUCK": {
+    objectId: "0xbb4a712b3353176092cdfe3dd2d1251b725f9372e954248e5dd2eb2ab6a5f21a",
+    tokenXType: "USDC",
+    tokenYType: "BUCK"
+  },
+  "VSUI-SUI": {
+    objectId: "0xf385dee283495bb70500f5f8491047cd5a2ef1b7ff5f410e6dfe8a3c3ba58716",
+    tokenXType: "vSUI",
+    tokenYType: "SUI"
+  },
+  "AFSUI-SUI": {
+    objectId: "0xc0d598bcad669ac1a9b0af255de259c46092b495cdd6c26f2cb38bb23d8b4357",
+    tokenXType: "afSUI",
+    tokenYType: "SUI"
+  }
+};
+
+export declare function getFullnodeUrl(network: 'mainnet' | 'testnet' | 'devnet' | 'localnet'): "https://fullnode.mainnet.sui.io:443" | "https://fullnode.testnet.sui.io:443" | "https://fullnode.devnet.sui.io:443" | "http://127.0.0.1:9000";
+
+export const getPoolByName = (poolName: string): Pool | undefined => {
+  return pools[poolName];
+};
+
+
 export const PROTOCOLS: { [key in keyof typeof ProtocolNames]?: any } = {
   [ProtocolNames.NAVI]: {
     name: 'NAVI',

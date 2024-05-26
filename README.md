@@ -2,6 +2,8 @@
 
 Tagline: "OneClickSUIDeFi: A drag and drop Sui Defi aggregator that allows you to chain together complex transactions and execute them at the same time , build strategies and execute them across SUI's Defi ecosystem"
 
+![Screenshot 2024-06-02 051301](https://github.com/kamalbuilds/1clickSuiDefi/assets/95926324/53268801-8c35-45bc-af1f-9cd15d33c737)
+
 Description: OneClickSUIDeFi is a platform that allows users to easily connect using zklogin, build strategies with simple Drag and Drop and navigate the SUI Defi space seamlessly. 
 
 - It enables users to aggregate and batch multiple transactions into a single transaction across different Defi protocols on SUI, currently supporting 8+ defi protocols on SUI.
