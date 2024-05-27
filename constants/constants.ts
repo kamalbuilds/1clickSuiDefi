@@ -10,7 +10,7 @@ export enum ActionTypes {
 
 export enum ProtocolNames {
   SELECT_PROTOCOL,
-  NAVIPROTOCOL,
+  NAVI,
   KRIYA,
 }
 
@@ -20,8 +20,8 @@ export const PROTOCOLS: { [key in keyof typeof ProtocolNames]?: any} = {
     address: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
     abi: []
   },
-  [ProtocolNames.NAVIPROTOCOL]: {
-    name: 'NAVIPROTOCOL',
+  [ProtocolNames.NAVI]: {
+    name: 'NAVI',
     address: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
     abi: []
   },
@@ -38,7 +38,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any} = {
     type: ActionTypes.SELECT_ACTION,
     name: 'Select Action',
     availableProtocols: [
-      ProtocolNames.NAVIPROTOCOL,
+      ProtocolNames.NAVI,
       ProtocolNames.KRIYA
     ],
   },
@@ -46,7 +46,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any} = {
     type: ActionTypes.SWAP,
     name: 'Swap',
     availableProtocols: [
-      ProtocolNames.NAVIPROTOCOL,
+      ProtocolNames.NAVI,
       ProtocolNames.KRIYA
     ],
   },
@@ -54,7 +54,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any} = {
     type: ActionTypes.ADD_LIQUIDITY,
     name: 'Add Liquidity',
     availableProtocols: [
-      ProtocolNames.NAVIPROTOCOL,
+      ProtocolNames.NAVI,
       ProtocolNames.KRIYA
     ],
   },
@@ -62,7 +62,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any} = {
     type: ActionTypes.REMOVE_LIQUIDITY,
     name: 'Remove Liquidity',
     availableProtocols: [
-      ProtocolNames.NAVIPROTOCOL,
+      ProtocolNames.NAVI,
       ProtocolNames.KRIYA
     ],
   },
@@ -70,7 +70,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any} = {
     type: ActionTypes.APPROVE,
     name: 'Approve',
     availableProtocols: [
-      ProtocolNames.NAVIPROTOCOL,
+      ProtocolNames.NAVI,
       ProtocolNames.KRIYA
     ],
   },
@@ -84,7 +84,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any} = {
     type: ActionTypes.WITHDRAW,
     name: 'Withdraw',
     availableProtocols: [
-      ProtocolNames.NAVIPROTOCOL,
+      ProtocolNames.NAVI,
       ProtocolNames.KRIYA
     ],
   },

@@ -1,11 +1,19 @@
 
 import styles from "../styles/action-block.module.css";
-import { Input } from "@chakra-ui/input";
+import { Input } from "../components/ui/input";
+import { Button } from "./ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { parseUnits } from 'ethers';
-import { Button, Select } from '@chakra-ui/react';
 import { ACTIONS, PROTOCOLS, ProtocolNames } from '../constants/constants';
 import TokenChooser from "./token-chooser";
-import { AddIcon, ArrowDownIcon } from "@chakra-ui/icons";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { CiCircleMinus } from "react-icons/ci";
 import { SELECTABLE_TOKENS } from "../constants/constants";
 import { ChangeEvent, useEffect, useState } from "react";
 import { motion, useMotionValue } from "framer-motion"
@@ -189,7 +197,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     if (actionname == "Swap") {
       handleSwap();
     } else if (actionname == "Add Liquidity") {
-      AddLiquidity();
+
     }
   }
 
@@ -232,7 +240,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
             onChange={handleChangeInput} disabled={loading}
           />
         </div>
-        {currentActionName == "Add Liquidity" || currentActionName == "Remove Liquidity" ? <AddIcon w={10} h={10} color={"#fff"} /> : <ArrowDownIcon w={10} h={10} color={"#fff"} />}
+        {currentActionName == "Add Liquidity" || currentActionName == "Remove Liquidity" ? <IoIosAddCircleOutline w={10} h={10} color={"#fff"} /> : <CiCircleMinus w={10} h={10} color={"#fff"} />}
         <div className={styles.actionInputField}>
           <TokenChooser
             selectedToken={selectedTokenTo}
