@@ -43,7 +43,7 @@ const Header = () => {
               href={"/batch"}
               className="text-black text-base self-stretch whitespace-nowrap justify-center items-center bg-white w-[145px] max-w-full px-9 py-4 rounded-md max-md:px-5"
             >
-              batch
+              Create Strategies
             </Link>
             <Link
               href={"#"}
@@ -100,7 +100,7 @@ const Header = () => {
           href={"/batch"}
           className="text-black text-base self-stretch whitespace-nowrap justify-center items-center bg-white w-[145px] max-w-full px-9 py-4 rounded-md max-md:px-5"
         >
-          Batch
+          Create Strategies
         </Link>
         <Link
           href={"#"}

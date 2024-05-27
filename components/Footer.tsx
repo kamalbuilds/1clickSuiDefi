@@ -72,16 +72,10 @@ const Footer = () => {
             </div>
             <div className="items-start flex w-[182px] justify-between gap-5">
               <Link
-                href={"#"}
+                href={"https://1clicksuidefi.gitbook.io/"}
                 className="text-gray-400 text-base hover:underline self-stretch"
               >
                 Docs
-              </Link>
-              <Link
-                href={"#"}
-                className="text-gray-400 text-base hover:underline self-stretch whitespace-nowrap"
-              >
-                Blog
               </Link>
             </div>
           </div>
