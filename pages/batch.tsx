@@ -7,12 +7,12 @@ import ActionBlock from '../components/action-block';
 import { ACTIONS, ProtocolNames } from '../constants/constants';
 
 import styles from '../styles/batch.module.css';
-import {Reorder} from "framer-motion";
+import { Reorder } from "framer-motion";
 import { useWallet } from '@suiet/wallet-kit';
 
 const Batch = () => {
 
-  const  wallet = useWallet();
+  const wallet = useWallet();
   const [actionBlocks, setActionBlocks] = useState([
     { id: 1, action: Object.keys(ACTIONS)[1], protocol: Object.keys(ProtocolNames)[1] },
   ]);
@@ -47,9 +47,8 @@ const Batch = () => {
     )
   }
   const renderConnected = () => {
-  return (
-    <div className={styles.container}>
-        <h2 className='my-6 text-white'>Build Custom Trading Strategies</h2>
+    return (
+      <div className={styles.container}>
         <Reorder.Group
           as="ul"
           className={styles.actionsWrapper}
@@ -57,36 +56,38 @@ const Batch = () => {
           values={actionBlocks}
           onReorder={setActionBlocks}
           layoutScroll
-          style={{overflowX: "scroll"}}
+          style={{ overflowX: "scroll" }}
         >
-      {actionBlocks.map((block) => (
-        <Reorder.Item key={block.id} value={block}>
-        <ActionBlock
-          key={block.id}
-          actionName={ACTIONS[block.action]?.name}
-          protocolName={ProtocolNames[block.protocol]}
-          onActionChange={(action) => updateActionBlock(block.id, 'action', action)}
-          onProtocolChange={(protocol) => updateActionBlock(block.id, 'protocol', protocol)}
-        />
-        </Reorder.Item>
-      ))}
-      </Reorder.Group>
-      <Button onClick={addActionBlock} className="mt-8">
-        ➕ Action Block
-      </Button>
-      <Button onClick={() => removeActionBlock(actionBlocks.length)} className="mt-8">
-        ❌ Latest Block
-      </Button>
+          {actionBlocks.map((block) => (
+            <Reorder.Item key={block.id} value={block}>
+              <ActionBlock
+                key={block.id}
+                actionName={ACTIONS[block.action]?.type}
+                protocolName={ProtocolNames[block.protocol]}
+                onActionChange={(action) => updateActionBlock(block.id, 'action', action)}
+                onProtocolChange={(protocol) => updateActionBlock(block.id, 'protocol', protocol)}
+              />
+            </Reorder.Item>
+          ))}
+        </Reorder.Group>
+        <div className='flex gap-8'>
+          <Button onClick={addActionBlock} className="mt-8">
+            ➕ Action Block
+          </Button>
+          <Button onClick={() => removeActionBlock(actionBlocks.length)} className="mt-8">
+            ❌ Latest Block
+          </Button>
+        </div>
       </div>
- )
-}
+    )
+  }
 
-return (
-  <>
-    {wallet && renderConnected()}
-    {!wallet && renderDisconnected()}
-  </>
-)
+  return (
+    <>
+      {wallet && renderConnected()}
+      {!wallet && renderDisconnected()}
+    </>
+  )
 
 }
 export default Batch;

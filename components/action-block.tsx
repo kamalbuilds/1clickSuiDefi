@@ -5,7 +5,9 @@ import { Button } from "./ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -20,6 +22,7 @@ import { motion, useMotionValue } from "framer-motion"
 import { SUITOKENS } from "../constants/Suitokens";
 import { Naviprotocol } from "../hooks/Naviprotocol";
 import { useWallet } from "@suiet/wallet-kit";
+import { ChevronDown } from "lucide-react";
 
 const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange }) => {
   const x = useMotionValue(0);
@@ -37,10 +40,10 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [successMessage, setSuccessMessage] = useState<string>();
-  const wallet= useWallet();
+  const wallet = useWallet();
 
-  const [currentActionName, setCurrentActionName] = useState(actionName || ACTIONS[1].name);
-  const [currentProtocolName, setProtocolName] = useState(protocolName || PROTOCOLS[1].name);
+  const [currentActionName, setCurrentActionName] = useState(actionName || ACTIONS['ADD_LIQUIDITY'].type);
+  const [currentProtocolName, setProtocolName] = useState(protocolName || PROTOCOLS['KRIYA'].name);
 
 
   const [lockedBlocks, setLockedBlocks] = useState([]);
@@ -71,16 +74,18 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     console.log("Locked Blocks Data:", lockedBlocks);
   };
 
-  const handleActionChange = (event) => {
-    const selectedActionKey = event.target.value;
-    setCurrentActionName(ACTIONS[selectedActionKey].name);
-    onActionChange(selectedActionKey);
+  const handleActionChange = (value) => {
+
+    console.log("value>>", value);
+
+    // const selectedActionKey = event.target.value;
+    setCurrentActionName(value);
+    // onActionChange(selectedActionKey);
   };
 
-  const handleProtocolChange = (event) => {
-    const selectedProtocolKey = event.target.value;
-    setProtocolName(PROTOCOLS[selectedProtocolKey].name);
-    onProtocolChange(selectedProtocolKey);
+  const handleProtocolChange = (value) => {
+    console.log("value>>", value);
+    setProtocolName(value);
   };
 
   // Determine which token list to use based on the protocolName
@@ -177,7 +182,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     } else if (protocolName === "KRIYA") {
       try {
 
-       
+
       } catch (error) {
         console.error('Error during swap:', error);
       }
@@ -202,26 +207,52 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   }
 
 
+  console.log("selectableTokens", selectableTokens);
+
   return (
-    <div className={styles.block}>
-      <div className={styles.actionNameWrapper}>
+    <div className={styles.block} >
+      <p className={styles.protocolName}>{currentProtocolName}</p>
+
+      <div className='text-xl font-semibold tracking-tight'>
         <h3 className={styles.actionName}>{currentActionName}</h3>
       </div>
-      <p className={styles.protocolName}>{currentProtocolName}</p>
-      <Select value={actionName} onChange={handleActionChange} color="greenyellow">
-        {Object.keys(ACTIONS).map((key) => (
-          <option key={key} value={key}>
-            {ACTIONS[key].name}
-          </option>
-        ))}
-      </Select>
-      <Select value={protocolName} onChange={handleProtocolChange} color="greenyellow">
-        {Object.keys(PROTOCOLS).map((key) => (
-          <option key={key} value={key}>
-            {PROTOCOLS[key].name}
-          </option>
-        ))}
-      </Select>
+
+      <div className="flex flex-col gap-8 mt-12">
+        <Select onValueChange={handleActionChange} value={currentActionName}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select option" />
+            <ChevronDown className="h-4 w-4 opacity-50" />
+          </SelectTrigger>
+          <SelectContent className="w-full">
+            <SelectGroup>
+              {Object.keys(ACTIONS).map((key) => (
+                <div key={key}>
+                  <SelectItem value={key}>{ACTIONS[key].name}</SelectItem>
+                </div>
+              )
+              )}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <Select onValueChange={handleProtocolChange} value={currentProtocolName}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select Protocol" />
+            <ChevronDown className="h-4 w-4 opacity-50" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {Object.keys(PROTOCOLS).map((key) => (
+                <div key={key}>
+                  <SelectItem value={key}> {PROTOCOLS[key].name}</SelectItem>
+                </div>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+
       <div className={styles.actionInputsWrapper}>
         <div className={styles.actionInputField}>
           <TokenChooser
@@ -230,6 +261,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
             selectableTokens={selectableTokens}
           />
           <Input
+            className="flex-1"
             placeholder="Input amount"
             color="gray.300"
             height={"3rem"}
@@ -249,6 +281,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
           />
           <Input
             readOnly
+            className="flex-1"
             placeholder="Output amount"
             color="gray.300"
             height={"3rem"}

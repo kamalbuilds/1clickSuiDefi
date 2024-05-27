@@ -1,25 +1,18 @@
 export enum ActionTypes {
-  SELECT_ACTION,
-  SWAP,
-  ADD_LIQUIDITY,
-  REMOVE_LIQUIDITY,
-  APPROVE,
-  TRANSFER,
-  WITHDRAW,
+  SWAP = 'SWAP',
+  ADD_LIQUIDITY = 'ADD_LIQUIDITY',
+  REMOVE_LIQUIDITY = 'REMOVE_LIQUIDITY',
+  APPROVE = 'APPROVE',
+  TRANSFER = 'TRANSFER',
+  WITHDRAW = 'WITHDRAW',
 }
 
-export enum ProtocolNames {
-  SELECT_PROTOCOL,
-  NAVI,
-  KRIYA,
-}
+export const ProtocolNames = {
+  NAVI: 'NAVI',
+  KRIYA: 'KRIYA',
+};
 
-export const PROTOCOLS: { [key in keyof typeof ProtocolNames]?: any} = {
-  [ProtocolNames.SELECT_PROTOCOL]: {
-    name: 'Select Protocol',
-    address: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
-    abi: []
-  },
+export const PROTOCOLS: { [key in keyof typeof ProtocolNames]?: any } = {
   [ProtocolNames.NAVI]: {
     name: 'NAVI',
     address: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
@@ -33,15 +26,7 @@ export const PROTOCOLS: { [key in keyof typeof ProtocolNames]?: any} = {
 }
 
 
-export const ACTIONS: { [key in keyof typeof ActionTypes]?: any} = {
-  [ActionTypes.SELECT_ACTION]: {
-    type: ActionTypes.SELECT_ACTION,
-    name: 'Select Action',
-    availableProtocols: [
-      ProtocolNames.NAVI,
-      ProtocolNames.KRIYA
-    ],
-  },
+export const ACTIONS: { [key in keyof typeof ActionTypes]?: any } = {
   [ActionTypes.SWAP]: {
     type: ActionTypes.SWAP,
     name: 'Swap',
@@ -91,6 +76,26 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any} = {
 };
 
 export const SELECTABLE_TOKENS = [
+  {
+    address: "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+    chainId: 1,
+    decimals: 9,
+    extensions: { coingeckoId: 'sui' },
+    logoURI: "https://raw.githubusercontent.com/sonarwatch/token-lists/main/images/common/SUI.png",
+    name: "Sui Coin",
+    symbol: "SUI",
+    tags: ['native']
+  },
+  {
+    address: "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+    chainId: 1,
+    decimals: 9,
+    extensions: { coingeckoId: 'sui' },
+    logoURI: "https://raw.githubusercontent.com/sonarwatch/token-lists/main/images/common/SUI.png",
+    name: "Sui Coin",
+    symbol: "SUI",
+    tags: ['native']
+  },
   {
     name: 'BTC',
     address: '',
