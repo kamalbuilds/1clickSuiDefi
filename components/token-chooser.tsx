@@ -1,4 +1,5 @@
-import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import { Button } from "./ui/button";
+import { Menu  } from "lucide-react";
 //@ts-ignore
 import { Btc, Usdt } from 'react-cryptocoins';
 import { inspect } from "util";
@@ -12,30 +13,30 @@ const TokenChooser = (props: any) => {
 
   return (
     <Menu>
-      <MenuButton as={Button} minWidth={"6rem"} height={"3rem"}>
+      <Button>
         <div className={styles.buttonWrapper}>
 
           <DynamicIconComponent size={18} fill="#1A202C" />
           <span className={styles.buttonText}>{props.selectedToken.symbol}</span>
         </div>
-      </MenuButton>
-      <MenuList>
+      </Button>
+      <div>
 
         {
           props.selectableTokens.map((token: any) => {
             if (token.symbol === props.selectedToken.symbol) return null;
             const DynamicIconOptionComponent: any = dynamic(() => import(`react-cryptocoins/dist/icons/${token.symbol}`))
             return (
-              <MenuItem key={token.symbol} onClick={() => props.setSelectedToken(token)}>
+              <div key={token.symbol} onClick={() => props.setSelectedToken(token)}>
                 <div className={styles.optionWrapper}>
                   <DynamicIconOptionComponent size={18} fill="#1A202C" />
                   <span className={styles.buttonText}>{token.symbol}</span>
                 </div>
-              </MenuItem>
+              </div>
             )
           })
         }
-      </MenuList>
+      </div>
     </Menu>
   );
 }
