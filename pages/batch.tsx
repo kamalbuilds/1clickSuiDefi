@@ -2,7 +2,7 @@
 // Batch component
 
 import React, { useState } from 'react';
-import { Button, Flex } from '@chakra-ui/react';
+import { Button } from '@/components/ui/button';
 import ActionBlock from '../components/action-block';
 import { ACTIONS, ProtocolNames } from '../constants/constants';
 
@@ -40,16 +40,16 @@ const Batch = () => {
 
   const renderDisconnected = () => {
     return (
-      <Flex
-        marginTop={"50px"}>
+      <div
+        className="marginTop=50">
         Connect your Wallet to start
-      </Flex>
+      </div>
     )
   }
   const renderConnected = () => {
   return (
     <div className={styles.container}>
-        <h2>Build Custom Trading Strategies</h2>
+        <h2 className='my-6 text-white'>Build Custom Trading Strategies</h2>
         <Reorder.Group
           as="ul"
           className={styles.actionsWrapper}
@@ -71,10 +71,10 @@ const Batch = () => {
         </Reorder.Item>
       ))}
       </Reorder.Group>
-      <Button onClick={addActionBlock} mt="8">
+      <Button onClick={addActionBlock} className="mt-8">
         ➕ Action Block
       </Button>
-      <Button onClick={() => removeActionBlock(actionBlocks.length)} mt="8">
+      <Button onClick={() => removeActionBlock(actionBlocks.length)} className="mt-8">
         ❌ Latest Block
       </Button>
       </div>

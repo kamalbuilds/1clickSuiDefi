@@ -7,7 +7,7 @@ import ConnectMenu from "./ui/ConnectMenu";
 import useDisclosure from "@/hooks/useDisclosure";
 import ConnectModal from "./ui/modals/ConnectModal";
 
-const Navbar = () => {
+const Header = () => {
   const address = useCurrentAccount()?.address;
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -132,4 +132,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Header;
