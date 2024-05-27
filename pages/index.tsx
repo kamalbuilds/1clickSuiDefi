@@ -1,102 +1,52 @@
-import type {NextPage} from 'next'
-import {Box, Flex, Text, chakra, ButtonGroup, Button, Heading} from "@chakra-ui/react";
-import Link from 'next/link'
+"use client";
 
-const Home: NextPage = () => {
+import Header from '@/components/Header'
+import FAQs from '@/components/FAQs'
+import Footer from '@/components/Footer'
+import Card from '@/components/card'
+import { MOCK_LIVE_STRATEGY, MOCK_COMING_SOON } from '@/constants/mockData'
+
+export default function Home() {
   return (
-    <>
-      <Flex
-        justifyContent={"center"}
-        alignItems={"center"}
-        height={"calc(100vh - 72px)"}
-        flexDirection={"column"}
-      >
-        <Flex>
-          <Heading
-            as={"h1"}
-            bgGradient='linear(to-r, #F0C3EC, #7F6AFF)'
-            bgClip='text'
-            fontSize={['6xl', '7xl', '8xl', '8xl']}
-            fontWeight='extrabold'
-            isTruncated
-          >
-            1ClickSuiDeFi
-          </Heading>
-        </Flex>
-        <Flex
-          justify={"center"}
-          align={"center"}
-          marginBottom={"5px"}>
-          <Heading
-            bgClip={"text"}
-            color={"white"}
-            fontSize={['l', 'xl', '2xl', '2xl']}
-            textAlign={"center"}
-          >
-          Drag and Drop for your favorite DeFi protocols on SUI
-          </Heading>
-        </Flex>
-        <Flex
-          justify={"center"}
-          align={"center"}
-          marginBottom={"5px"}
-        >
-          <Text
-            color={"grey"}
-            fontSize={['small', 'medium', 'xl', 'xl']}
-            textAlign={"center"}
-          >
-            Optimize your transactions with low fees thanks to &nbsp;
-            <chakra.span
-              bgGradient='linear(to-r, #F0C3EC, #7F6AFF)'
-              bgClip='text'
-            >
-              SUI
-            </chakra.span>
-            ’s ecosystem
-          </Text>
-        </Flex>
-        <Flex
-          justifyContent={"space-between"}
-          width={"50%"}
-          marginTop={"50px"}
-        >
-          <Link
-            href={"/sui"} passHref
-          >
-            <Button
-              background='transparent'
-              width={"145px"}
-              height='60px'
-              borderRadius='35px'
-              border='1px'
-              borderColor='#FFFF'
-              color="#F0C3EC"
-              _hover={{bgGradient: 'linear(to-r, #F0C3EC, #7F6AFF)'}}
-            >
-              Explore protocols
-            </Button>
-          </Link>
-
-          <Link href={"/batch"} passHref>
-            <Button
-              bg='transparent'
-              width={"145px"}
-              height='60px'
-              borderRadius='35px'
-              border='1px'
-              borderColor='#FFFF'
-              color="#F0C3EC"
-              _hover={{bgGradient: 'linear(to-l, #F0C3EC, #7F6AFF)'}}
-            >
-              Gasless batch
-
-            </Button>
-          </Link>
-        </Flex>
-      </Flex>
-    </>
+    <div className='relative w-full justify-center items-center flex flex-col xl:pt-25'>
+      <Header />
+      <div className='flex w-full flex-col max-md:max-w-full bg-main bg-cover bg-center bg-no-repeat'>
+        <div className='flex-col overflow-hidden self-stretch relative flex w-full pt-24 pb-24 px-20 max-md:max-w-full max-md:pb-24 max-md:px-5'>
+          <div className='relative self-center flex mb-0 w-full max-w-[1082px] flex-col max-md:max-w-full max-md:mb-2.5'>
+            <div className='items-start self-stretch flex flex-col max-md:max-w-full'>
+              <div className=' text-3xl self-stretch whitespace-nowrap max-md:max-w-full'>
+                Live Strategy Vault
+              </div>
+              <div className='w-full grid grid-cols-1 xl:grid-cols-[334px_334px_334px] justify-between gap-y-5 xl:gap-y-15 xl:mt-12'>
+                {MOCK_LIVE_STRATEGY.map((info, index) => (
+                  <Card
+                    key={info.protocolName + info.title + index}
+                    cardInfo={info}
+                  />
+                ))}
+              </div>
+            </div>
+            {/* <div className="items-start self-stretch flex grow flex-col mt-40 max-md:max-w-full max-md:mt-10">
+              <div className="text-black text-3xl self-stretch whitespace-nowrap max-md:max-w-full">
+                Coming Soon
+              </div>
+              <div className="w-full grid grid-cols-1 xl:grid-cols-[334px_334px_334px] justify-between gap-y-5 xl:gap-y-15 mt-12 max-md:mt-10">
+                {MOCK_COMING_SOON.map((item, index) => (
+                  <Card
+                    key={item.name + item.title + index}
+                    title={item.title}
+                    protocol={item.name}
+                    logo={item.logo}
+                  />
+                ))}
+              </div>
+            </div> */}
+          </div>
+        </div>
+      </div>
+      <FAQs />
+      <Footer />
+    </div>
   )
 }
 
-export default Home
