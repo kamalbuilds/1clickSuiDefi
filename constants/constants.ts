@@ -5,6 +5,8 @@ export enum ActionTypes {
   APPROVE = 'APPROVE',
   TRANSFER = 'TRANSFER',
   WITHDRAW = 'WITHDRAW',
+  TakeFlashLoan = 'TakeFlashLoan',
+  RepayFlashLoan = 'RepayFlashLoan',
 }
 
 export const ProtocolNames = {
@@ -51,9 +53,17 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any } = {
       ProtocolNames.KRIYA
     ],
   },
-  [ActionTypes.APPROVE]: {
-    type: ActionTypes.APPROVE,
-    name: 'Approve',
+  [ActionTypes.TakeFlashLoan]: {
+    type: ActionTypes.TakeFlashLoan,
+    name: 'Take Flashloan',
+    availableProtocols: [
+      ProtocolNames.NAVI,
+      ProtocolNames.KRIYA
+    ],
+  },
+  [ActionTypes.RepayFlashLoan]: {
+    type: ActionTypes.RepayFlashLoan,
+    name: 'Repay Flashloan',
     availableProtocols: [
       ProtocolNames.NAVI,
       ProtocolNames.KRIYA
@@ -63,14 +73,6 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any } = {
     type: ActionTypes.TRANSFER,
     name: 'Transfer',
     availableProtocols: [
-    ],
-  },
-  [ActionTypes.WITHDRAW]: {
-    type: ActionTypes.WITHDRAW,
-    name: 'Withdraw',
-    availableProtocols: [
-      ProtocolNames.NAVI,
-      ProtocolNames.KRIYA
     ],
   },
 };

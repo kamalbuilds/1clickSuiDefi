@@ -21,6 +21,9 @@ Track Specific Resources:
 
 - [Dacade](https://dacade.org/communities/sui/challenges/19885730-fb83-477a-b95b-4ab265b61438): Learn how to build a liquidity pool with DeepBook and frontend incorporating zklogin
 
+
+https://blockeden.xyz/api-marketplace/sui
+
 ## Technology track - zklogin or multichain
 
 Features:
