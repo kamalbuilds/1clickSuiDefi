@@ -30,7 +30,7 @@ const Card = ({ cardInfo }: ICardProps) => {
         )}
       >
         <div className="items-start self-stretch flex flex-col">
-          <div className="text-neutral-800 text-3xl self-stretch whitespace-nowrap">
+          <div className="text-black text-3xl self-stretch whitespace-nowrap">
             {cardInfo?.title}
           </div>
           <div className="items-start self-stretch flex gap-4 mt-3.5">
@@ -41,7 +41,7 @@ const Card = ({ cardInfo }: ICardProps) => {
               width={25}
               height={25}
             />
-            <div className="text-neutral-800 text-base self-stretch whitespace-nowrap">
+            <div className="text-black text-base self-stretch whitespace-nowrap">
               {cardInfo?.protocolName}
             </div>
           </div>
@@ -56,14 +56,14 @@ const Card = ({ cardInfo }: ICardProps) => {
                 value={nativeAPR}
                 unit="%"
                 skeletonClass="w-14.5 h-7.5"
-                numberClass="text-neutral-800 text-xl self-stretch whitespace-nowrap mt-2.5"
+                numberClass="text-black text-xl self-stretch whitespace-nowrap mt-2.5"
               />
               <span className="mt-2">~</span>
               <FormatNumber
                 value={nativeAPR * maxLeverage}
                 unit="%"
                 skeletonClass="w-14.5 h-7.5"
-                numberClass="text-neutral-800 text-xl self-stretch whitespace-nowrap mt-2.5"
+                numberClass="text-black text-xl self-stretch whitespace-nowrap mt-2.5"
               />
             </div>
           </div>
@@ -75,9 +75,9 @@ const Card = ({ cardInfo }: ICardProps) => {
               <FormatNumber
                 value={1070}
                 skeletonClass="w-12 h-7.5"
-                numberClass="text-neutral-800 text-xl self-start"
+                numberClass="text-black text-xl self-start"
               />
-              <div className="text-neutral-800 text-xs whitespace-nowrap mt-2.5 self-start">
+              <div className="text-black text-xs whitespace-nowrap mt-2.5 self-start">
                 SUI
               </div>
             </div>

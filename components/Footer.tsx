@@ -73,7 +73,7 @@ const Footer = () => {
             <div className="items-start flex w-[182px] justify-between gap-5">
               <Link
                 href={"https://1clicksuidefi.gitbook.io/"}
-                className="text-gray-400 text-base hover:underline self-stretch"
+                className="text-blue-800 text-base hover:underline self-stretch"
               >
                 Docs
               </Link>

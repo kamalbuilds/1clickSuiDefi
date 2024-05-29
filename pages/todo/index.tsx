@@ -58,7 +58,7 @@ const Home: NextPage = () => {
             >
               SUI
             </span>
-            ’s ecosystem
+             ecosystem
           </Text>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', width: '50%', marginTop: '50px' }}>

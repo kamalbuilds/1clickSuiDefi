@@ -25,7 +25,7 @@ const LeveragePanel = ({ stakeAmount }: IConvertPanelProps) => {
       ? cryptosPriceData?.find((item) => item.symbol === "SUI")?.price ?? 0
       : 0
   );
-  //TODO: Justa
+
   const [inputAmount, setInputAmount] = useState("");
   const [leverage, setLeverage] = useState([2]);
   const [suiBalance, setSuiBalance] = useState("0");

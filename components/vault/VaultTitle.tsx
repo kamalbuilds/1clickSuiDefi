@@ -20,7 +20,7 @@ const VaultTitle = ({ title, basicInfo }: IVaultTitleProps) => {
           width={36}
           height={36}
         />
-        <div className="text-neutral-800 text-2xl whitespace-nowrap">
+        <div className="text-black text-2xl whitespace-nowrap">
           {basicInfo.name}
         </div>
       </div>

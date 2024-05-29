@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 const SingleStrategyVaultPage = () => {
   return (
-    <main className="relative w-full justify-center items-center  flex flex-col xl:pt-25">
+    <main className="relative w-full justify-center items-center  flex flex-col lg:pt-25">
       <Header />
       <div className="flex w-full flex-col max-md:max-w-full">
         <div className="flex-col overflow-hidden relative flex min-h-[970px] w-full items-center pt-20 pb-56 px-5 max-md:max-w-full max-md:pb-24">
@@ -26,7 +26,7 @@ const SingleStrategyVaultPage = () => {
                       Back
                     </div>
                   </div>
-                  <div className="text-black text-4xl whitespace-nowrap mt-5">
+                  <div className="text-black text-4lg whitespace-nowrap mt-5">
                     Yield Boost
                   </div>
                   <div className="items-stretch flex w-[237px] max-w-full gap-4 mt-5">
@@ -35,7 +35,7 @@ const SingleStrategyVaultPage = () => {
                       srcSet="..."
                       className="aspect-square object-contain object-center w-9 overflow-hidden shrink-0 max-w-full rounded-[50%]"
                     />
-                    <div className="text-black text-2xl whitespace-nowrap">
+                    <div className="text-black text-2lg whitespace-nowrap">
                       Bucket Protocol
                     </div>
                   </div>
@@ -44,7 +44,7 @@ const SingleStrategyVaultPage = () => {
                       <div className="text-blue-800 text-base whitespace-nowrap">
                         APR Since Inception
                       </div>
-                      <div className="text-black text-3xl whitespace-nowrap mt-2.5">
+                      <div className="text-black text-3lg whitespace-nowrap mt-2.5">
                         3.98%
                       </div>
                     </div>
@@ -53,7 +53,7 @@ const SingleStrategyVaultPage = () => {
                         AUM
                       </div>
                       <div className="justify-between items-stretch self-stretch flex gap-1.5 mt-2.5">
-                        <div className="text-black text-3xl">1.07K</div>
+                        <div className="text-black text-3lg">1.07K</div>
                         <div className="text-blue-800 text-base whitespace-nowrap mt-5 self-start">
                           SUI
                         </div>
@@ -65,7 +65,7 @@ const SingleStrategyVaultPage = () => {
                         My Positions
                       </div>
                       <div className="items-stretch flex justify-between gap-2.5 mt-2.5">
-                        <div className="text-black text-3xl">0.0000</div>
+                        <div className="text-black text-3lg">0.0000</div>
                         <img
                           loading="lazy"
                           srcSet="..."
@@ -78,7 +78,7 @@ const SingleStrategyVaultPage = () => {
                     <div className="text-black text-base max-md:max-w-full">
                       Intro
                     </div>
-                    <div className="text-blue-800 text-xs mt-5 max-md:max-w-full">
+                    <div className="text-blue-800 text-lg mt-5 max-md:max-w-full">
                       Users Deposit SUI and auto swap half for USDC and provide
                       liquidity for SUI/BUCK on DEX to earn trading fees and SUI
                       rewards.
@@ -88,7 +88,7 @@ const SingleStrategyVaultPage = () => {
                     <div className="text-black text-base max-md:max-w-full">
                       Risk
                     </div>
-                    <div className="text-blue-800 text-xs mt-5 max-md:max-w-full">
+                    <div className="text-blue-800 text-lg mt-5 max-md:max-w-full">
                       Users Deposit SUI and auto swap half for USDC and provide
                       liquidity for SUI/BUCK on DEX to earn trading fees and SUI
                       rewards.
@@ -99,10 +99,10 @@ const SingleStrategyVaultPage = () => {
                       Contract
                     </div>
                     <div className="flex justify-between gap-5 mt-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-                      <div className="text-blue-800 text-xs">
+                      <div className="text-blue-800 text-lg">
                         Bucket Contract
                       </div>
-                      <div className="text-blue-800 text-xs">
+                      <div className="text-blue-800  text-lg">
                         0x712cABa…cc6D2Fb30
                       </div>
                       <img
@@ -112,8 +112,8 @@ const SingleStrategyVaultPage = () => {
                       />
                     </div>
                     <div className="flex justify-between gap-5 mt-1.5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-                      <div className="text-blue-800 text-xs">Strateg Vault</div>
-                      <div className="text-blue-800 text-xs">
+                      <div className="text-blue-800 text-lg">Strateg Vault</div>
+                      <div className="text-blue-800 text-lg">
                         0x712cABa…cc6D2Fb30
                       </div>
                       <img
@@ -127,12 +127,12 @@ const SingleStrategyVaultPage = () => {
               </div>
               <div className="flex flex-col items-stretch w-[39%] ml-5 max-md:w-full max-md:ml-0">
                 <div className="shadow-lg bg-white relative flex w-full flex-col mt-32 mx-auto pl-12 pr-14 pt-16 pb-14 rounded-md max-md:mt-10 max-md:px-5">
-                  <div className="text-black text-xl self-stretch">
+                  <div className="text-black text-lg self-stretch">
                     Convert your SUI collateral to LST and earn 4.7% APR
                   </div>
                   <div className="flex w-[142px] max-w-full gap-5 mt-9 self-end">
-                    <div className="text-neutral-400 text-xs">Staked SUI</div>
-                    <div className="text-neutral-400 text-right text-xs underline self-stretch whitespace-nowrap">
+                    <div className="text-neutral-400 text-lg">Staked SUI</div>
+                    <div className="text-neutral-400 text-right text-lg underline self-stretch whitespace-nowrap">
                       89,320.923
                     </div>
                   </div>
@@ -151,35 +151,35 @@ const SingleStrategyVaultPage = () => {
                   </div>
                   <div className="self-center flex justify-between gap-5 mt-7">
                     <div className="flex grow basis-[0%] flex-col items-stretch">
-                      <div className="text-black text-xs">Validator APY</div>
-                      <div className="text-black text-xs mt-5">
+                      <div className="text-black text-lg">Validator APY</div>
+                      <div className="text-black text-lg mt-5">
                         Validator Fee
                       </div>
-                      <div className="text-black text-xs mt-5">
+                      <div className="text-black text-lg mt-5">
                         Exchange Rate
                       </div>
-                      <div className="text-black text-xs mt-4">
+                      <div className="text-black text-lg mt-4">
                         Validator APY
                       </div>
                     </div>
                     <div className="self-stretch flex grow basis-[0%] flex-col">
                       <div className="self-stretch flex flex-col items-stretch pl-16 max-md:pl-5">
-                        <div className="text-black text-right text-xs">
+                        <div className="text-black text-right text-lg">
                           4.41 %
                         </div>
-                        <div className="text-black text-right text-xs ml-3.5 mt-5 max-md:ml-2.5">
+                        <div className="text-black text-right text-lg ml-3.5 mt-5 max-md:ml-2.5">
                           0 %
                         </div>
                       </div>
-                      <div className="text-black text-right text-xs self-stretch mt-5">
+                      <div className="text-black text-right text-lg self-stretch mt-5">
                         1 SUI ≈ 1.00 afSUI
                       </div>
-                      <div className="text-black text-right text-xs mt-5">
+                      <div className="text-black text-right text-lg mt-5">
                         9,999 afSUI
                       </div>
                     </div>
                   </div>
-                  <div className="text-blue-600 text-xl whitespace-nowrap justify-center items-center border bg-white self-stretch mt-12 px-5 py-2.5 rounded-lg border-solid border-blue-600 max-md:mt-10">
+                  <div className="text-blue-600 text-lg whitespace-nowrap justify-center items-center border bg-white self-stretch mt-12 px-5 py-2.5 rounded-lg border-solid border-blue-600 max-md:mt-10">
                     Convert
                   </div>
                 </div>

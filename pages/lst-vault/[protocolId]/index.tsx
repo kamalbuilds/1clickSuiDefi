@@ -49,7 +49,7 @@ const LSTSingleVaultPage = () => {
                   <div className="text-black text-base max-md:max-w-full">
                     Intro
                   </div>
-                  <div className="text-gray-400 text-xs mt-4.5 max-md:max-w-full max-md:mt-3">
+                  <div className="text-blue-800 text-xs mt-4.5 max-md:max-w-full max-md:mt-3">
                     {vaultBasicInfo.info}
                   </div>
                 </div>
@@ -58,7 +58,7 @@ const LSTSingleVaultPage = () => {
                   <div className="text-black text-base max-md:max-w-full">
                     Risk
                   </div>
-                  <div className="text-gray-400 text-xs mt-4.5 max-md:max-w-full max-md:mt-3">
+                  <div className="text-blue-800 text-xs mt-4.5 max-md:max-w-full max-md:mt-3">
                     {vaultBasicInfo.risk}
                   </div>
                 </div>
@@ -79,7 +79,7 @@ const LSTSingleVaultPage = () => {
                         >
                           <Link
                             href={MAINNET_EXPLORER.PROTOCOL + contract.address}
-                            className="flex items-center gap-5 mt-4.5 max-md:max-w-full max-md:flex-wrap max-md:justify-center text-gray-400 xl:hover:text-primary xl:hover:underline max-md:mt-3"
+                            className="flex items-center gap-5 mt-4.5 max-md:max-w-full max-md:flex-wrap max-md:justify-center text-blue-800 xl:hover:text-primary xl:hover:underline max-md:mt-3"
                           >
                             <div
                               className={cn(

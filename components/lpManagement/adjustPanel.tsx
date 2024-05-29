@@ -30,8 +30,7 @@ import { getKriyaLPBalance } from '@/protocolstrategies/kriya/getter'
 const AdjustPanel = ({ protocol }: { protocol: LQMProtocol }) => {
   const [inputAmount, setInputAmount] = useState('')
 
-  const pool_address =
-    '0x9379d2d3f221dcea70f7f7d4a7bf30bab0128bcfda0d13a85267e51f7e6e15c0'
+  const pool_address ='0x9379d2d3f221dcea70f7f7d4a7bf30bab0128bcfda0d13a85267e51f7e6e15c0'
   const account = useCurrentAccount()
   const suiClient = useSuiClient()
   const { mutate: signAndExecuteTransactionBlock } =
@@ -159,6 +158,7 @@ const AdjustPanel = ({ protocol }: { protocol: LQMProtocol }) => {
                 <Link
                   className='flex items-center gap-1 pr-2'
                   target='_blank'
+                  rel='noreferrer'
                   href='https://app.cetus.zone/liquidity/position?poolAddress=0x9379d2d3f221dcea70f7f7d4a7bf30bab0128bcfda0d13a85267e51f7e6e15c0'
                 >
                   Success! Click to see your position
@@ -187,6 +187,7 @@ const AdjustPanel = ({ protocol }: { protocol: LQMProtocol }) => {
 
           <a
             target='_blank'
+            rel='noreferrer'
             href={
               'https://app.cetus.zone/liquidity/deposit?poolAddress=0x9379d2d3f221dcea70f7f7d4a7bf30bab0128bcfda0d13a85267e51f7e6e15c0'
             }

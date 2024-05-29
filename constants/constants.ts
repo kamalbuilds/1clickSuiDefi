@@ -2,7 +2,6 @@ export enum ActionTypes {
   SWAP = 'SWAP',
   ADD_LIQUIDITY = 'ADD_LIQUIDITY',
   REMOVE_LIQUIDITY = 'REMOVE_LIQUIDITY',
-  APPROVE = 'APPROVE',
   TRANSFER = 'TRANSFER',
   WITHDRAW = 'WITHDRAW',
   TakeFlashLoan = 'TakeFlashLoan',
@@ -12,18 +11,41 @@ export enum ActionTypes {
 export const ProtocolNames = {
   NAVI: 'NAVI',
   KRIYA: 'KRIYA',
+  SUPRA: 'SUPRA',
+  AFTERMATH: 'AFTERMATH',
+  BUCKET: 'BUCKET',
+  CETUS: 'CETUS',
+  SCALLOP: 'SCALLOP',
 };
 
 export const PROTOCOLS: { [key in keyof typeof ProtocolNames]?: any } = {
   [ProtocolNames.NAVI]: {
     name: 'NAVI',
-    address: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
-    abi: []
+    packageid: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
   },
   [ProtocolNames.KRIYA]: {
     name: 'KRIYA',
-    address: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
-    abi: []
+    packageid: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
+  },
+  [ProtocolNames.SUPRA]: {
+    name: 'SUPRA',
+    packageid: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
+  },
+  [ProtocolNames.AFTERMATH]: {
+    name: 'AFTERMATH',
+    packageid: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
+  },
+  [ProtocolNames.BUCKET]: {
+    name: 'BUCKET',
+    packageid: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
+  },
+  [ProtocolNames.CETUS]: {
+    name: 'CETUS',
+    packageid: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
+  },
+  [ProtocolNames.SCALLOP]: {
+    name: 'SCALLOP',
+    packageid: '0x818e6fecd516ecc3849daf6845e3ec868087b755',
   },
 }
 
@@ -58,7 +80,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any } = {
     name: 'Take Flashloan',
     availableProtocols: [
       ProtocolNames.NAVI,
-      ProtocolNames.KRIYA
+      ProtocolNames.BUCKET
     ],
   },
   [ActionTypes.RepayFlashLoan]: {
@@ -66,7 +88,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any } = {
     name: 'Repay Flashloan',
     availableProtocols: [
       ProtocolNames.NAVI,
-      ProtocolNames.KRIYA
+      ProtocolNames.BUCKET
     ],
   },
   [ActionTypes.TRANSFER]: {
@@ -150,7 +172,3 @@ export const AVNU_TOKENS = [
     symbol: 'wBTC',
   }
 ];
-
-export const MY_SWAP_ROUTER_ADDRESS = '0x071faa7d6c3ddb081395574c5a6904f4458ff648b66e2123b877555d9ae0260e';
-export const JEDI_FACTORY_ADDRESS = '0x06b4115fa43c48118d3f79fbc500c75917c8a28d0f867479acb81893ea1e036c';
-export const JEDI_REGISTRY_ADDRESS = '0x0413ba8d51ec05be863eb82314f0cf0ffceff949e76c87cae0a4bd7f89cfc2b1'

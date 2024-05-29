@@ -33,7 +33,7 @@ const ModalContainer = (props: Props) => {
           {showCloseButton ? (
             <button
               onClick={onClose}
-              className="absolute right-4 top-4 ml-auto inline-flex items-center rounded-lg bg-transparent p-1 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 "
+              className="absolute right-4 top-4 ml-auto inline-flex items-center rounded-lg bg-transparent p-1 text-sm text-blue-800 hover:bg-gray-200 hover:text-gray-900 "
             >
               <svg
                 aria-hidden="true"

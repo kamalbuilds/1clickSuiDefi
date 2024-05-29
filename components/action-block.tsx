@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { parseUnits } from 'ethers';
 import { ACTIONS, ActionTypes, PROTOCOLS, ProtocolNames } from '../constants/constants';
 import TokenChooser from "./token-chooser";
 import { IoIosAddCircleOutline } from "react-icons/io";

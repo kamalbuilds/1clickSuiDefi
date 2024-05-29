@@ -11,7 +11,7 @@ const VaultData = () => {
     <div className="h-20 flex justify-between gap-10.5 mt-10 max-md:max-w-full max-md:flex-wrap max-md:justify-start max-md:gap-6 max-md:mt-10">
       {/* APR */}
       <div className="items-stretch self-stretch flex flex-col justify-between">
-        <span className="text-gray-400 text-base whitespace-nowrap">APR</span>
+        <span className="text-blue-800 text-base whitespace-nowrap">APR</span>
         <div className="flex items-center gap-1.5">
           <FormatNumber
             value={nativeAPR}
@@ -30,14 +30,14 @@ const VaultData = () => {
       </div>
       {/* AUM */}
       <div className="self-stretch flex flex-col justify-between">
-        <span className="text-gray-400 text-base">AUM</span>
+        <span className="text-blue-800 text-base">AUM</span>
         <div className="justify-between items-stretch self-stretch flex gap-1.5 mt-2.5">
           <FormatNumber
             value={1070}
             skeletonClass="w-19.5 h-12"
             numberClass="text-black text-[32px] whitespace-nowrap"
           />
-          <span className="text-gray-400 text-base whitespace-nowrap self-end mb-1.6">
+          <span className="text-blue-800 text-base whitespace-nowrap self-end mb-1.6">
             SUI
           </span>
         </div>
@@ -51,7 +51,7 @@ const VaultData = () => {
       /> */}
       {/* My Positions */}
       <div className="items-stretch self-stretch flex grow flex-col">
-        <span className="text-gray-400 text-base whitespace-nowrap">
+        <span className="text-blue-800 text-base whitespace-nowrap">
           My Positions
         </span>
         <div className="flex items-center justify-between gap-2.5 mt-2.5 max-md:justify-start">

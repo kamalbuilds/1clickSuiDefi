@@ -40,6 +40,21 @@ export default function Home() {
                 ))}
               </div>
             </div>
+            {/* <div className="items-start self-stretch flex grow flex-col mt-40 max-md:max-w-full max-md:mt-10">
+              <div className="text-black text-3xl self-stretch whitespace-nowrap max-md:max-w-full">
+                Coming Soon
+              </div>
+              <div className="w-full grid grid-cols-1 xl:grid-cols-[334px_334px_334px] justify-between gap-y-5 xl:gap-y-15 mt-12 max-md:mt-10">
+                {MOCK_COMING_SOON.map((item, index) => (
+                  <Card
+                    key={item.name + item.title + index}
+                    title={item.title}
+                    protocol={item.name}
+                    logo={item.logo}
+                  />
+                ))}
+              </div>
+            </div> */}
           </div>
         </div>
       </div>

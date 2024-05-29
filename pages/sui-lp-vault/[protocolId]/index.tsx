@@ -35,13 +35,13 @@ const SingleStrategyVaultPage = () => {
                       srcSet="..."
                       className="aspect-square object-contain object-center w-9 overflow-hidden shrink-0 max-w-full rounded-[50%]"
                     />
-                    <div className="text-neutral-800 text-2xl whitespace-nowrap">
+                    <div className="text-black text-2xl whitespace-nowrap">
                       Bucket Protocol
                     </div>
                   </div>
                   <div className="items-start self-stretch flex justify-between gap-5 mt-10 max-md:max-w-full max-md:flex-wrap max-md:justify-center max-md:mt-10">
                     <div className="items-stretch self-stretch flex grow basis-[0%] flex-col">
-                      <div className="text-gray-400 text-base whitespace-nowrap">
+                      <div className="text-blue-800 text-base whitespace-nowrap">
                         APR Since Inception
                       </div>
                       <div className="text-black text-3xl whitespace-nowrap mt-2.5">
@@ -49,19 +49,19 @@ const SingleStrategyVaultPage = () => {
                       </div>
                     </div>
                     <div className="self-stretch flex grow basis-[0%] flex-col">
-                      <div className="text-gray-400 text-base whitespace-nowrap">
+                      <div className="text-blue-800 text-base whitespace-nowrap">
                         AUM
                       </div>
                       <div className="justify-between items-stretch self-stretch flex gap-1.5 mt-2.5">
                         <div className="text-black text-3xl">1.07K</div>
-                        <div className="text-gray-400 text-base whitespace-nowrap mt-5 self-start">
+                        <div className="text-blue-800 text-base whitespace-nowrap mt-5 self-start">
                           SUI
                         </div>
                       </div>
                     </div>
                     <div className="w-px shrink-0 h-[73px] mt-1.5 self-start" />
                     <div className="items-stretch self-stretch flex grow basis-[0%] flex-col">
-                      <div className="text-gray-400 text-base whitespace-nowrap">
+                      <div className="text-blue-800 text-base whitespace-nowrap">
                         My Positions
                       </div>
                       <div className="items-stretch flex justify-between gap-2.5 mt-2.5">
@@ -78,7 +78,7 @@ const SingleStrategyVaultPage = () => {
                     <div className="text-black text-base max-md:max-w-full">
                       Intro
                     </div>
-                    <div className="text-gray-400 text-xs mt-5 max-md:max-w-full">
+                    <div className="text-blue-800 text-xs mt-5 max-md:max-w-full">
                       Users Deposit SUI and auto swap half for USDC and provide
                       liquidity for SUI/BUCK on DEX to earn trading fees and SUI
                       rewards.
@@ -88,7 +88,7 @@ const SingleStrategyVaultPage = () => {
                     <div className="text-black text-base max-md:max-w-full">
                       Risk
                     </div>
-                    <div className="text-gray-400 text-xs mt-5 max-md:max-w-full">
+                    <div className="text-blue-800 text-xs mt-5 max-md:max-w-full">
                       Users Deposit SUI and auto swap half for USDC and provide
                       liquidity for SUI/BUCK on DEX to earn trading fees and SUI
                       rewards.
@@ -99,10 +99,10 @@ const SingleStrategyVaultPage = () => {
                       Contract
                     </div>
                     <div className="flex justify-between gap-5 mt-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-                      <div className="text-gray-400 text-xs">
+                      <div className="text-blue-800 text-xs">
                         Bucket Contract
                       </div>
-                      <div className="text-gray-400 text-xs">
+                      <div className="text-blue-800 text-xs">
                         0x712cABa…cc6D2Fb30
                       </div>
                       <img
@@ -112,8 +112,8 @@ const SingleStrategyVaultPage = () => {
                       />
                     </div>
                     <div className="flex justify-between gap-5 mt-1.5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-                      <div className="text-gray-400 text-xs">Strateg Vault</div>
-                      <div className="text-gray-400 text-xs">
+                      <div className="text-blue-800 text-xs">Strateg Vault</div>
+                      <div className="text-blue-800 text-xs">
                         0x712cABa…cc6D2Fb30
                       </div>
                       <img

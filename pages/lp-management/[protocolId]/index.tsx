@@ -49,7 +49,7 @@ const LiquidityManagementPage = (props: Props) => {
                   <div className='text-black text-base max-md:max-w-full'>
                     Description
                   </div>
-                  <div className='text-gray-400 text-xs mt-4.5 max-md:max-w-full max-md:mt-3 text-justify'>
+                  <div className='text-blue-800 text-xs mt-4.5 max-md:max-w-full max-md:mt-3 text-justify'>
                     {vaultBasicInfo.info}
                   </div>
                 </div>
@@ -58,7 +58,7 @@ const LiquidityManagementPage = (props: Props) => {
                   <div className='text-black text-base max-md:max-w-full'>
                     How it works
                   </div>
-                  <div className='text-gray-400 text-xs mt-4.5 max-md:max-w-full max-md:mt-3'>
+                  <div className='text-blue-800 text-xs mt-4.5 max-md:max-w-full max-md:mt-3'>
                     <ul className='list-disc list-inside space-y-2'>
                       {vaultBasicInfo.howItWorks.contents.map((step, index) => (
                         <li key={vaultBasicInfo.name + '_step_' + index}>
@@ -85,7 +85,7 @@ const LiquidityManagementPage = (props: Props) => {
                         >
                           <Link
                             href={MAINNET_EXPLORER.PROTOCOL + contract.address}
-                            className="flex items-center gap-5 mt-4.5 max-md:max-w-full max-md:flex-wrap max-md:justify-center text-gray-400 xl:hover:text-primary xl:hover:underline max-md:flex-col max-md:gap-2 max-md:items-start max-md:mt-3"
+                            className="flex items-center gap-5 mt-4.5 max-md:max-w-full max-md:flex-wrap max-md:justify-center text-blue-800 xl:hover:text-primary xl:hover:underline max-md:flex-col max-md:gap-2 max-md:items-start max-md:mt-3"
                           >
                             <div className={cn("w-51 text-xs")}>
                               {contract.name}
