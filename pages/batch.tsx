@@ -10,11 +10,16 @@ import styles from '../styles/batch.module.css';
 import { Reorder } from "framer-motion";
 import { useWallet } from '@suiet/wallet-kit';
 
+const initBlockState = { id: 1, action: Object.keys(ACTIONS)[1], protocol: Object.keys(ProtocolNames)[1] };
+
 const Batch = () => {
+
+  //TODO: Here is the useState for storing the states information
+  const [batchActions, setBatchActions] = useState([]);
 
   const wallet = useWallet();
   const [actionBlocks, setActionBlocks] = useState([
-    { id: 1, action: Object.keys(ACTIONS)[1], protocol: Object.keys(ProtocolNames)[1] },
+    initBlockState
   ]);
 
   const addActionBlock = () => {
@@ -37,6 +42,10 @@ const Batch = () => {
     );
     setActionBlocks(updatedBlocks);
   };
+
+
+  console.log("BAtch Actions >>>>", batchActions);
+
 
   const renderDisconnected = () => {
     return (
@@ -66,6 +75,7 @@ const Batch = () => {
                 protocolName={ProtocolNames[block.protocol]}
                 onActionChange={(action) => updateActionBlock(block.id, 'action', action)}
                 onProtocolChange={(protocol) => updateActionBlock(block.id, 'protocol', protocol)}
+                setBatchActions={setBatchActions}
               />
             </Reorder.Item>
           ))}
@@ -76,6 +86,12 @@ const Batch = () => {
           </Button>
           <Button onClick={() => removeActionBlock(actionBlocks.length)} className="mt-8">
             ❌ Latest Block
+          </Button>
+          <Button onClick={() => {
+            setBatchActions(null)
+            setActionBlocks([initBlockState])
+          }} className="mt-8">
+            🗑️ Clear Batch
           </Button>
         </div>
       </div>
