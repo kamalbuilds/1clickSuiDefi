@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { parseUnits } from 'ethers';
-import { ACTIONS, PROTOCOLS, ProtocolNames } from '../constants/constants';
+import { ACTIONS, ActionTypes, PROTOCOLS, ProtocolNames } from '../constants/constants';
 import TokenChooser from "./token-chooser";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { CiCircleMinus } from "react-icons/ci";
@@ -23,11 +23,17 @@ import { SUITOKENS } from "../constants/Suitokens";
 import { Naviprotocol } from "../hooks/Naviprotocol";
 import { useWallet } from "@suiet/wallet-kit";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange }) => {
+const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange, setBatchActions }) => {
   const x = useMotionValue(0);
   const xPositions = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
   const [xPos, setXPos] = useState(x);
+
+  const [blockedAction, setBlockedAction] = useState(false);
+
+  const [currentActionName, setCurrentActionName] = useState(actionName || ACTIONS['ADD_LIQUIDITY'].type);
+  const [currentProtocolName, setProtocolName] = useState(protocolName || PROTOCOLS['KRIYA'].name);
 
   const [selectedTokenFrom, setSelectedTokenFrom] = useState<any>(SELECTABLE_TOKENS[0]);
   const [selectedTokenTo, setSelectedTokenTo] = useState<any>(SELECTABLE_TOKENS[1]);
@@ -37,14 +43,13 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
 
   const [sellAmount, setSellAmount] = useState<number>();
   const [quote, setQuote] = useState<string>();
+
+
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [successMessage, setSuccessMessage] = useState<string>();
+
   const wallet = useWallet();
-
-  const [currentActionName, setCurrentActionName] = useState(actionName || ACTIONS['ADD_LIQUIDITY'].type);
-  const [currentProtocolName, setProtocolName] = useState(protocolName || PROTOCOLS['KRIYA'].name);
-
 
   const [lockedBlocks, setLockedBlocks] = useState([]);
 
@@ -52,21 +57,36 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     const newLockedBlock = {
       actionName: currentActionName,
       protocolName: currentProtocolName,
-      selectedTokenFrom,
-      selectedTokenTo,
-      sellAmount,
-      quote
+      data: {
+        selectedTokenFrom: selectedTokenFrom,
+        selectedTokenTo: selectedTokenTo,
+        sellAmount: sellAmount,
+        quote: quote
+      }
     };
-    setLockedBlocks([...lockedBlocks, newLockedBlock]);
-    // Clear current state values
-    setCurrentActionName(currentActionName);
-    setProtocolName(currentProtocolName);
-    setSelectedTokenFrom(SELECTABLE_TOKENS[0]);
-    setSelectedTokenTo(SELECTABLE_TOKENS[1]);
-    setSellAmount(sellAmount);
-    setQuote(quote);
+    // setLockedBlocks([...lockedBlocks, newLockedBlock]);
+    // // Clear current state values
+    // setCurrentActionName(currentActionName);
+    // setProtocolName(currentProtocolName);
+    // setSelectedTokenFrom(SELECTABLE_TOKENS[0]);
+    // setSelectedTokenTo(SELECTABLE_TOKENS[1]);
+    // setSellAmount(sellAmount);
+    // setQuote(quote);
 
-    setLockedBlocks(prevBlocks => [...prevBlocks, newLockedBlock]);
+    // setLockedBlocks(prevBlocks => [...prevBlocks, newLockedBlock]);
+
+    setBlockedAction(true);
+    console.log("newLockedBlock", newLockedBlock)
+
+    setBatchActions(prevActions => {
+      if (prevActions) {
+        return [...prevActions, newLockedBlock]
+      } else {
+        return [newLockedBlock]
+      }
+    }
+    );
+
   };
 
   const handleGetLockedBlocksData = () => {
@@ -101,68 +121,74 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     if (!wallet) return;
     setErrorMessage('');
     const sellAmountValue = Number(event.target.value);
-    console.log("Sell Amount valueeee>>>>>", sellAmountValue, event.target.value);
+    console.log("Sell Amount valueeee>>>>>", sellAmountValue, event.target.value, currentProtocolName, currentProtocolName === PROTOCOLS['NAVI'].name,);
     setSellAmount(sellAmountValue);
-    if (currentProtocolName === "NAVIPROTOCOL") {
+    if (currentProtocolName == PROTOCOLS['NAVI'].name) {
 
-      if (selectedTokenFrom.decimals) {
-        const sellamountbaseunit = sellAmountValue * Math.pow(10, selectedTokenFrom.decimals);
+      console.log("1");
+      //TODO: See if the below code works or not
 
-        fetch('/api/quote', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': '*/*',
-          },
-          body: JSON.stringify({
-            offer_address: selectedTokenFrom.address,
-            ask_address: selectedTokenTo.address,
-            units: sellamountbaseunit,
-            slippage_tolerance: 0.001
-          })
-        })
-          .then(response => response.json())
-          .then(data => {
-            const quote = data.ask_units / Math.pow(10, selectedTokenTo.decimals);
-            setQuote(quote.toString());
-            console.log("quote set", data.ask_units);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
-      } else {
+      // if (selectedTokenFrom.decimals) {
+      //   const sellamountbaseunit = sellAmountValue * Math.pow(10, selectedTokenFrom.decimals);
 
-        console.log(sellAmountValue, selectedTokenFrom.decimals, "sellAmountValue");
-        fetch('/api/quote', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': '*/*',
-          },
-          body: JSON.stringify({
-            offer_address: selectedTokenFrom.address,
-            ask_address: selectedTokenTo.address,
-            units: sellAmountValue,
-            slippage_tolerance: 0.001
-          })
-        })
-          .then(response => response.json())
-          .then(data => {
-            const quote = data.ask_units / Math.pow(10, selectedTokenTo.decimals);
-            setQuote(quote.toString());
-            console.log("quote set", data.ask_units);
-            setLoading(false);
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
-      }
-    } else if (currentProtocolName === "KRIYA") {
+      //   fetch('/api/quote', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       'Accept': '*/*',
+      //     },
+      //     body: JSON.stringify({
+      //       offer_address: selectedTokenFrom.address,
+      //       ask_address: selectedTokenTo.address,
+      //       units: sellamountbaseunit,
+      //       slippage_tolerance: 0.001
+      //     })
+      //   })
+      //     .then(response => response.json())
+      //     .then(data => {
+      //       const quote = data.ask_units / Math.pow(10, selectedTokenTo.decimals);
+      //       setQuote(quote.toString());
+      //       console.log("quote set", data.ask_units);
+      //       setLoading(false);
+      //     })
+      //     .catch((error) => {
+      //       console.error('Error:', error);
+      //     });
+      // } else {
+
+      //   console.log(sellAmountValue, selectedTokenFrom.decimals, "sellAmountValue");
+      //   fetch('/api/quote', {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       'Accept': '*/*',
+      //     },
+      //     body: JSON.stringify({
+      //       offer_address: selectedTokenFrom.address,
+      //       ask_address: selectedTokenTo.address,
+      //       units: sellAmountValue,
+      //       slippage_tolerance: 0.001
+      //     })
+      //   })
+      //     .then(response => response.json())
+      //     .then(data => {
+      //       const quote = data.ask_units / Math.pow(10, selectedTokenTo.decimals);
+      //       setQuote(quote.toString());
+      //       console.log("quote set", data.ask_units);
+      //       setLoading(false);
+      //     })
+      //     .catch((error) => {
+      //       console.error('Error:', error);
+      //     });
+      // }
+    } else if (currentProtocolName == PROTOCOLS['KRIYA'].name) {
+
+      console.log("2");
+
       const sellAmountValue = Number(event.target.value);
       // get the quote
     }
-    setLoading(true);
+    // setLoading(true);
   };
 
 
@@ -193,11 +219,6 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
 
   }, [x]);
 
-
-
-
-
-
   const handlesubmit = async (actionname: string) => {
     if (actionname == "Swap") {
       handleSwap();
@@ -205,9 +226,6 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
 
     }
   }
-
-
-  console.log("selectableTokens", selectableTokens);
 
   return (
     <div className={styles.block} >
@@ -217,8 +235,8 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
         <h3 className={styles.actionName}>{currentActionName}</h3>
       </div>
 
-      <div className="flex flex-col gap-8 mt-12">
-        <Select onValueChange={handleActionChange} value={currentActionName}>
+      <div className="flex flex-col gap-8 mt-12 ">
+        <Select disabled={blockedAction} onValueChange={handleActionChange} value={currentActionName}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select option" />
             <ChevronDown className="h-4 w-4 opacity-50" />
@@ -235,7 +253,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
           </SelectContent>
         </Select>
 
-        <Select onValueChange={handleProtocolChange} value={currentProtocolName}>
+        <Select disabled={blockedAction} onValueChange={handleProtocolChange} value={currentProtocolName}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Protocol" />
             <ChevronDown className="h-4 w-4 opacity-50" />
@@ -253,14 +271,16 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       </div>
 
 
-      <div className={styles.actionInputsWrapper}>
+      <div className={cn("", styles.actionInputsWrapper)}>
         <div className={styles.actionInputField}>
           <TokenChooser
+            blockedAction={blockedAction}
             selectedToken={selectedTokenFrom}
             setSelectedToken={setSelectedTokenFrom}
             selectableTokens={selectableTokens}
           />
           <Input
+            disabled={loading || blockedAction}
             className="flex-1"
             placeholder="Input amount"
             color="gray.300"
@@ -269,38 +289,49 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
             borderColor="gray.300"
             _hover={{ borderColor: "gray.500" }}
             _focus={{ borderColor: "gray.500" }}
-            onChange={handleChangeInput} disabled={loading}
+            onChange={handleChangeInput}
           />
         </div>
+
         {currentActionName == "Add Liquidity" || currentActionName == "Remove Liquidity" ? <IoIosAddCircleOutline w={10} h={10} color={"#fff"} /> : <CiCircleMinus w={10} h={10} color={"#fff"} />}
-        <div className={styles.actionInputField}>
-          <TokenChooser
-            selectedToken={selectedTokenTo}
-            setSelectedToken={setSelectedTokenTo}
-            selectableTokens={selectableTokens}
-          />
-          <Input
-            readOnly
-            className="flex-1"
-            placeholder="Output amount"
-            color="gray.300"
-            height={"3rem"}
-            borderRadius="md"
-            borderColor="gray.300"
-            _hover={{ borderColor: "gray.500" }}
-            _focus={{ borderColor: "gray.500" }}
-            value={quote ? quote : ''}
-          />
-        </div>
+
+        {/* Don't display this when the action is related to FlashLoans */}
+        {currentActionName !== ActionTypes.RepayFlashLoan &&
+          currentActionName !== ActionTypes.TakeFlashLoan && (
+            <div className={styles.actionInputField}>
+              <TokenChooser
+                blockedAction={blockedAction}
+                selectedToken={selectedTokenTo}
+                setSelectedToken={setSelectedTokenTo}
+                selectableTokens={selectableTokens}
+              />
+              <Input
+                disabled={blockedAction}
+                readOnly
+                className="flex-1"
+                placeholder="Output amount"
+                color="gray.300"
+                height={"3rem"}
+                borderRadius="md"
+                borderColor="gray.300"
+                _hover={{ borderColor: "gray.500" }}
+                _focus={{ borderColor: "gray.500" }}
+                value={quote ? quote : ''}
+              />
+            </div>
+          )
+        }
+
         <div>
           {loading ? <p style={{ color: 'green' }}>Loading...</p> : <Button style={{ color: 'green' }} onClick={() => handlesubmit(currentActionName)}>{currentActionName}</Button>}
           {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
           {successMessage && <p style={{ color: 'green' }}>Success</p>}
         </div>
 
-        <Button onClick={handleLockAction}>Lock This Action 🔒</Button>
-        <Button onClick={handleGetLockedBlocksData}>Execute Locked Blocks 🔥</Button>
+        <Button disabled={blockedAction} onClick={handleLockAction}>Lock This Action 🔒</Button>
+
       </div>
+      <Button onClick={handleGetLockedBlocksData}>Execute Locked Blocks 🔥</Button>
     </div>
   );
 };

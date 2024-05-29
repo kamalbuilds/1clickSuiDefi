@@ -25,7 +25,7 @@ const TokenChooser = (props: any) => {
 
 
   return (
-    <Select onValueChange={handleTokenChange}>
+    <Select disabled={props.blockedAction} onValueChange={handleTokenChange}>
       <SelectTrigger className="w-[180px]" asChild>
         <Button variant="outline" className="min-w-[100px] w-auto px-2 py-1 gap-2 justify-start">
           <div className="flex gap-2">
