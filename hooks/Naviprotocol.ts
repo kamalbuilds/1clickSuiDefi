@@ -9,7 +9,7 @@ export class Naviprotocol implements OneclickSUIDefi {
     }
 
     addLiquidity(account: string,provider,token1: string, token2: string, amount1: string, amount2: string): Promise<any> {
-        
+        return ;
     }
   
     approve(): void {

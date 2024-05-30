@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import FormatNumber from "../formats/formatNumber";
 import {
   useCurrentAccount,
-  useSignAndExecuteTransactionBlock,
   useSuiClient,
 } from "@mysten/dapp-kit";
+import { useSignAndExecuteTransaction } from "@mysten/dapp-kit";
 import { createBucketLeverageTx } from "../../protocolstrategies/bucket/strategies";
 import Link from "next/link";
 import { Link as LinkIcon } from "lucide-react";
@@ -32,7 +32,7 @@ const LeveragePanel = ({ stakeAmount }: IConvertPanelProps) => {
   const account = useCurrentAccount();
   const suiClient = useSuiClient();
   const { mutate: signAndExecuteTransactionBlock } =
-    useSignAndExecuteTransactionBlock();
+    useSignAndExecuteTransaction();
 
 useEffect(() => {
     const getSuiBalance = async () => {
@@ -86,12 +86,12 @@ useEffect(() => {
     if (!tx) return;
     // tx.setGasBudget(50_000_000);
     signAndExecuteTransactionBlock({
-      transactionBlock: tx as any,
+      transaction: tx as any,
       chain: "sui:mainnet"
     },
     {
       onSuccess: (res) => {
-        suiClient.waitForTransactionBlock({ digest: res.digest }).then(() => {
+        suiClient.waitForTransaction({ digest: res.digest }).then(() => {
           if (!!res.digest) {
             toast.success(
               <Link

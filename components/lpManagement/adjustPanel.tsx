@@ -6,7 +6,7 @@ import { FiExternalLink } from 'react-icons/fi'
 import FormatNumber from '../formats/formatNumber'
 import {
   useCurrentAccount,
-  useSignAndExecuteTransactionBlock,
+  useSignAndExecuteTransaction,
   useSuiClient,
 } from '@mysten/dapp-kit'
 import { CetusSDK, liquidityToCoinAmount } from '@/protocolstrategies/cetus/getter'
@@ -34,7 +34,7 @@ const AdjustPanel = ({ protocol }: { protocol: LQMProtocol }) => {
   const account = useCurrentAccount()
   const suiClient = useSuiClient()
   const { mutate: signAndExecuteTransactionBlock } =
-    useSignAndExecuteTransactionBlock()
+  useSignAndExecuteTransaction()
   const [position, setPosition] = useState<Position | null>(null)
   const [pool, setPool] = useState<Pool>()
   const [percentage, setPercentage] = useState([50])
@@ -147,12 +147,12 @@ const AdjustPanel = ({ protocol }: { protocol: LQMProtocol }) => {
     // tx.setGasBudget(50_000_000);
     signAndExecuteTransactionBlock(
       {
-        transactionBlock: tx as any,
+        transaction: tx as any,
         chain: 'sui:mainnet',
       },
       {
         onSuccess: (res) => {
-          suiClient.waitForTransactionBlock({ digest: res.digest }).then(() => {
+          suiClient.waitForTransaction({ digest: res.digest }).then(() => {
             if (!!res.digest) {
               toast.success(
                 <Link
