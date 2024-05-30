@@ -27,6 +27,7 @@ export default withNewZkLoginSession(
     // Render sign-in options based on what's configured.
     return (
       <>
+      <div className='relative w-full justify-center items-center flex flex-col xl:pt-25'>
         {GOOGLE_CLIENT_ID && (
           <div>
             <button
@@ -81,6 +82,7 @@ export default withNewZkLoginSession(
             </button>
           </div>
         )}
+        </div>
       </>
     );
   },

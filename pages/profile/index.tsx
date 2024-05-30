@@ -13,6 +13,7 @@ export default function Index() {
     // Signed-in experience.
     return (
       <>
+          <div className='relative w-full justify-center items-center flex flex-col xl:pt-25'>
         <h1>Hello, {user.oidProvider} user!</h1>
         <div>
           <Link href={getSuiVisionAccountUrl(user.wallet)} target="_blank">
@@ -25,15 +26,18 @@ export default function Index() {
         <div>
           <Link href={`${AUTH_API_BASE}/logout`}>Sign out</Link>
         </div>
+        </div>
       </>
     );
   } else {
     // Anonymous experience.
     return (
       <>
+      <div className='relative w-full justify-center items-center flex flex-col xl:pt-25'>
         <h1>Hello, anonymous user!</h1>
         <div>
           <Link href={LOGIN_PAGE_PATH}>Sign in</Link>
+        </div>
         </div>
       </>
     );
