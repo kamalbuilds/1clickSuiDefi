@@ -13,16 +13,17 @@ import {
 } from "@/components/ui/select";
 import { ACTIONS, ActionTypes, PROTOCOLS, ProtocolNames } from '../constants/constants';
 import TokenChooser from "./token-chooser";
-import { IoIosAddCircleOutline } from "react-icons/io";
+import { IoIosAddCircleOutline, IoIosArrowDown } from "react-icons/io";
 import { CiCircleMinus } from "react-icons/ci";
 import { SELECTABLE_TOKENS } from "../constants/constants";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { motion, useMotionValue } from "framer-motion"
 import { SUITOKENS } from "../constants/Suitokens";
 import { Naviprotocol } from "../hooks/Naviprotocol";
-import { useWallet } from "@suiet/wallet-kit";
+import { WalletProvider, useAccounts, useSignAndExecuteTransaction, useSignTransaction, useSuiClient, useWallets } from "@mysten/dapp-kit";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {txBuild, estimateGasFee, getSmartRouting} from "@flowx-pkg/ts-sdk";
 
 const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange, setBatchActions }) => {
   const x = useMotionValue(0);
@@ -32,7 +33,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   const [blockedAction, setBlockedAction] = useState(false);
 
   const [currentActionName, setCurrentActionName] = useState(actionName || ACTIONS['ADD_LIQUIDITY'].type);
-  const [currentProtocolName, setProtocolName] = useState(protocolName || PROTOCOLS['KRIYA'].name);
+  const [currentProtocolName, setProtocolName] = useState(protocolName || PROTOCOLS['KRIYADEX'].name);
 
   const [selectedTokenFrom, setSelectedTokenFrom] = useState<any>(SELECTABLE_TOKENS[0]);
   const [selectedTokenTo, setSelectedTokenTo] = useState<any>(SELECTABLE_TOKENS[1]);
@@ -47,10 +48,19 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [successMessage, setSuccessMessage] = useState<string>();
+  
+  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const { mutateAsync: signTransaction } = useSignTransaction();
+  const suiclient = useSuiClient();
+  console.log(suiclient,"sui clcll")
+  const accounts = useAccounts();
+  const wallet = accounts[0]?.address;
+  console.log(wallet,"wealle")
 
-  const wallet = useWallet();
-
+  console.log(currentActionName,"current action name")
   const [lockedBlocks, setLockedBlocks] = useState([]);
+
+  const abortQuerySmartRef = useRef(new AbortController());
 
   const handleLockAction = () => {
     const newLockedBlock = {
@@ -95,10 +105,10 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
 
   const handleActionChange = (value) => {
 
-    console.log("value>>", value);
-
     // const selectedActionKey = event.target.value;
+    console.log(currentActionName)
     setCurrentActionName(value);
+    
     // onActionChange(selectedActionKey);
   };
 
@@ -180,7 +190,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       //       console.error('Error:', error);
       //     });
       // }
-    } else if (currentProtocolName == PROTOCOLS['KRIYA'].name) {
+    } else if (currentProtocolName == PROTOCOLS['KRIYADEX'].name) {
 
       console.log("2");
 
@@ -192,7 +202,8 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
 
 
   const handleSwap = async () => {
-    if (!wallet || !sellAmount || !quote) return;
+    // if (!wallet || !sellAmount || !quote) return;
+    console.log(currentProtocolName,"swap with")
     setErrorMessage('');
     setSuccessMessage('');
     setLoading(true);
@@ -204,13 +215,62 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       } catch (error) {
         console.error('Error during swap:', error);
       }
-    } else if (protocolName === "KRIYA") {
+    } else if (currentProtocolName === "KRIYADEX") {
       try {
 
 
       } catch (error) {
         console.error('Error during swap:', error);
       }
+    } else if (currentProtocolName === "FLOWX") {
+      console.log(selectedTokenFrom,"yoi",selectedTokenTo)
+
+
+      const slippage = 2;
+
+        console.log(sellAmount,"sellAmount")
+        const amountinstring = sellAmount.toString();
+        console.log(selectedTokenFrom.type,selectedTokenTo.type,amountinstring,abortQuerySmartRef.current.signal, true,"sd");
+      const {paths,amountOut} = await getSmartRouting(selectedTokenFrom.type,selectedTokenTo.type,amountinstring,abortQuerySmartRef.current.signal, true)
+      console.log(paths,amountOut,"smart router gave us");
+
+      const txb = await txBuild(paths,slippage,amountinstring,amountOut,selectedTokenFrom.type,wallet);
+      console.log(txBuild,"txbuild >>")
+
+      const feereq= await estimateGasFee(txb);
+      console.log(feereq);
+      const { fee, amountOut:amountOutDev, pathsAmountOut } = feereq;
+      console.log(fee,"fee")
+
+      const tx = await txBuild(paths,slippage,amountinstring,amountOutDev,selectedTokenFrom.type,wallet,pathsAmountOut);
+      console.log(tx,"txBuild returns me this >>");
+      tx.setSender(wallet!)
+      const txnbytes = (await tx.build(suiclient)).toString();
+
+      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+        transaction: txnbytes,
+        chain: 'sui:mainnet',
+      });
+
+      const executeResult = await suiclient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature,
+        options: {
+          showRawEffects: true,
+        },
+      });
+
+      // Always report transaction effects to the wallet after execution
+      // reportTransactionEffects(result.rawEffects!);
+
+      console.log(executeResult);
+
+      // signAndExecuteTransaction(
+      //   {
+      //     transaction: tx,
+      //     chain: 'sui:devnet',
+      //   },
+      // );
     }
   };
 
@@ -219,9 +279,10 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   }, [x]);
 
   const handlesubmit = async (actionname: string) => {
-    if (actionname == "Swap") {
+    console.log(actionName,"Action name", currentActionName)
+    if (currentActionName == "SWAP") {
       handleSwap();
-    } else if (actionname == "Add Liquidity") {
+    } else if (currentActionName == "Add_Liquidity") {
 
     }
   }
@@ -292,7 +353,8 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
           />
         </div>
 
-        {currentActionName == "Add Liquidity" || currentActionName == "Remove Liquidity" ? <IoIosAddCircleOutline className="w-10 h-10" color={"#fff"} /> : <CiCircleMinus className="w-10 h-10" color={"#fff"} />}
+
+        {currentActionName == "Add_Liquidity" || currentActionName == "Remove_Liquidity" ? <IoIosAddCircleOutline className="w-10 h-10" color={"#fff"} /> : <IoIosArrowDown className="w-10 h-10" color={"#fff"} />}
 
         {/* Don't display this when the action is related to FlashLoans */}
         {currentActionName !== ActionTypes.RepayFlashLoan &&

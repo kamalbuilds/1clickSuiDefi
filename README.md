@@ -13,13 +13,12 @@ Below is what users can do on our platform :
 
 ### **Currently Supported Defi Protocols**: OneClickSUIDeFi currently supports 
 
-- Navixprotocol , Kriya, Scallop , Cetus , Bucket , Aftermath , Supra , volo with plans to expand to additional protocols in the future.
+- Navi protocol , Kriya, Scallop , Cetus , Bucket , Aftermath , Supra , FlowXFinance, Typus Finance with plans to expand to additional protocols in the future.
 
+- We are utilsing Blockvision for quering the data from the chain.
 ## Track :
 
 ### Primary track - DeFi
-
-*Sponsored by [GSR](https://www.gsr.io/) - 1st place prize, [dWallet](https://dwallet.io/) - 2nd place prize, [Supra](https://supra.com/) - 3rd place prize, [ZettaBlock](https://www.zettablock.com/) - 3rd place prize*
 
 DeFi on Sui is booming! Build the next generation of DeFi apps utilizing Sui’s unique architecture and powerful primitives, like [Programmable Transaction Blocks](https://blog.sui.io/programmable-transaction-blocks-explained/). Whether it is yield aggregation, trading bot infrastructure, liquidity management dashboards, or something entirely different, we’re eager to see what you will build.
 
