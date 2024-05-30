@@ -3,10 +3,9 @@ import '../vars.css'
 import type {AppProps} from 'next/app'
 import Navbar from "../components/Navbar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WalletProvider } from "@suiet/wallet-kit";
 import "@suiet/wallet-kit/style.css";
 import dynamic from 'next/dynamic';
-
+import { ZkLoginSessionProvider } from "@shinami/nextjs-zklogin/client";
 
 function MyApp({Component, pageProps}: AppProps) {
   
@@ -15,16 +14,17 @@ function MyApp({Component, pageProps}: AppProps) {
   });
 
 const queryClient = new QueryClient({
-defaultOptions: { queries: { refetchOnWindowFocus: false } },
 });
 
   return (
         <QueryClientProvider client={queryClient}>
              <SuiWalletProvider>
+              <ZkLoginSessionProvider>
           <div className={"customBackground"}>
             <Navbar/>
             <Component {...pageProps} />
           </div>
+          </ZkLoginSessionProvider>
           </SuiWalletProvider>
         </QueryClientProvider>
   )
