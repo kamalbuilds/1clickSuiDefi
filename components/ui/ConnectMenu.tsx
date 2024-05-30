@@ -40,19 +40,7 @@ const ConnectMenu = () => {
                 </button>
               </Link>
             </DropdownMenuItem>
-            {/* <DropdownMenuItem className="DropdownMenuItem">
-                <button
-                  className="flex w-[150px] items-center justify-center gap-2 rounded-lg py-3 hover:bg-[#2e79dc] hover:text-white md:w-[120px]"
-                  onClick={() => onOpen()}
-                >
-                  <HiSwitchHorizontal
-                    strokeWidth={2}
-                    color="white"
-                    className="h-4 w-4"
-                  />
-                  <div className="text-white sm:text-sm">Switch Account</div>
-                </button>
-              </DropdownMenuItem> */}
+
             <DropdownMenuItem className="DropdownMenuItem">
               <button
                 className="flex w-[150px] items-center justify-center gap-2 rounded-lg py-3 text-black hover:bg-[#2e79dc] hover:text-white md:w-[120px]"
