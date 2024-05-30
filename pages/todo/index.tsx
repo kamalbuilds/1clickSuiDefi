@@ -126,12 +126,8 @@ const Home: NextPage = () => {
                 </div>
                 <div className='w-full grid grid-cols-1 xl:grid-cols-[334px_334px_334px] justify-between gap-y-5 xl:gap-y-15 mt-12 max-md:mt-10'>
                   {MOCK_COMING_SOON.map((item, index) => (
-                    <Card
-                      key={item.name + item.title + index}
-                      title={item.title}
-                      protocol={item.name}
-                      logo={item.logo}
-                    />
+4
+                    
                   ))}
                 </div>
               </div>

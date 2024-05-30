@@ -197,7 +197,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     setSuccessMessage('');
     setLoading(true);
     if (protocolName === "NAVIPROTOCOL") {
-      const Navi = Naviprotocol.getInstance();
+      
 
       try {
 
@@ -284,15 +284,15 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
             placeholder="Input amount"
             color="gray.300"
             height={"3rem"}
-            borderRadius="md"
-            borderColor="gray.300"
-            _hover={{ borderColor: "gray.500" }}
-            _focus={{ borderColor: "gray.500" }}
+            // borderRadius="md"
+            // borderColor="gray.300"
+            // _hover={{ borderColor: "gray.500" }}
+            // _focus={{ borderColor: "gray.500" }}
             onChange={handleChangeInput}
           />
         </div>
 
-        {currentActionName == "Add Liquidity" || currentActionName == "Remove Liquidity" ? <IoIosAddCircleOutline w={10} h={10} color={"#fff"} /> : <CiCircleMinus w={10} h={10} color={"#fff"} />}
+        {currentActionName == "Add Liquidity" || currentActionName == "Remove Liquidity" ? <IoIosAddCircleOutline className="w-10 h-10" color={"#fff"} /> : <CiCircleMinus className="w-10 h-10" color={"#fff"} />}
 
         {/* Don't display this when the action is related to FlashLoans */}
         {currentActionName !== ActionTypes.RepayFlashLoan &&
@@ -311,10 +311,10 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
                 placeholder="Output amount"
                 color="gray.300"
                 height={"3rem"}
-                borderRadius="md"
-                borderColor="gray.300"
-                _hover={{ borderColor: "gray.500" }}
-                _focus={{ borderColor: "gray.500" }}
+                // borderRadius="md"
+                // borderColor="gray.300"
+                // _hover={{ borderColor: "gray.500" }}
+                // _focus={{ borderColor: "gray.500" }}
                 value={quote ? quote : ''}
               />
             </div>
