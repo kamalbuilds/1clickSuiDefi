@@ -21,34 +21,23 @@ export default withNewZkLoginSession(
   () => relativeToCurrentEpoch(sui),
   ({ session }) => {
     const router = useRouter();
-    console.log(router.query,"redci")
-    // const redirectTo = first(router.query.redirectTo);
-    const redirectTo = window.location.origin;
-    console.log(redirectTo,"redci")
+    const redirectTo = first(router.query.redirectTo);
     const callbackBaseUrl = new URL("auth/", window.location.origin);
-    console.log(callbackBaseUrl,"callback")
-
-    const url = getGoogleAuthUrl(
-      session,
-      GOOGLE_CLIENT_ID!,
-      new URL("google", 'http://localhost:3000'),
-      redirectTo,
-    );
-
-    console.log(url,"url")
+    console.log("Redirecting to:", redirectTo, callbackBaseUrl);
+    GOOGLE_CLIENT_ID && console.log("Google client ID:", GOOGLE_CLIENT_ID);
     // Render sign-in options based on what's configured.
     return (
       <>
       <div className='relative w-full justify-center items-center flex flex-col xl:pt-25'>
         {GOOGLE_CLIENT_ID && (
-          <div>
+          <div className="my-24">
             <button
               onClick={() => {
                 router.replace(
                   getGoogleAuthUrl(
                     session,
                     GOOGLE_CLIENT_ID!,
-                    new URL("google", 'http://localhost:3000'),
+                    new URL("google", callbackBaseUrl),
                     redirectTo,
                   ),
                 );
