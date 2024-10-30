@@ -15,25 +15,26 @@ import TokenChooser from "./token-chooser";
 import { IoIosAddCircleOutline, IoIosArrowDown } from "react-icons/io";
 import { CiCircleMinus } from "react-icons/ci";
 import { SELECTABLE_TOKENS } from "../constants/constants";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { motion, useMotionValue } from "framer-motion"
 import { SUITOKENS } from "../constants/Suitokens";
 import { Naviprotocol } from "../hooks/Naviprotocol";
 import { WalletProvider, useAccounts, useSignAndExecuteTransaction, useSignTransaction, useSuiClient, useWallets } from "@mysten/dapp-kit";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {txBuild, estimateGasFee, getSmartRouting} from "@flowx-pkg/ts-sdk";
+import { txBuild, estimateGasFee, getSmartRouting } from "@flowx-pkg/ts-sdk";
 import { getFullnodeUrl } from "../constants/constants";
 
 import { TransactionBlock } from "@mysten/sui.js/transactions";
 import { Dex } from "kriya-dex-sdk";
 import { getPoolByName } from "../constants/constants";
 import { Pool, PoolConfig } from "navi-sdk/dist/types";
+import { processAmount, refineAmount } from "@/helpers";
+import { Aftermath, AftermathApi, IndexerCaller, Router, RouterCompleteTradeRoute } from "aftermath-ts-sdk";
+import { suiClient } from "@/protocolstrategies/common/constants";
 
 const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange, setBatchActions }) => {
   const x = useMotionValue(0);
-  const xPositions = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-  const [xPos, setXPos] = useState(x);
 
   const [blockedAction, setBlockedAction] = useState(false);
 
@@ -53,16 +54,16 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [successMessage, setSuccessMessage] = useState<string>();
-  
+
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const { mutateAsync: signTransaction } = useSignTransaction();
   const suiclient = useSuiClient();
-  console.log(suiclient,"sui clcll")
+  // console.log(suiclient, "sui clcll")
   const accounts = useAccounts();
   const wallet = accounts[0]?.address;
-  console.log(wallet,"wealle")
+  // console.log(wallet, "wealle")
 
-  console.log(currentActionName,"current action name")
+  // console.log(currentActionName, "current action name")
   const [lockedBlocks, setLockedBlocks] = useState([]);
 
   const abortQuerySmartRef = useRef(new AbortController());
@@ -77,16 +78,6 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
         quote: quote
       }
     };
-    // setLockedBlocks([...lockedBlocks, newLockedBlock]);
-    // // Clear current state values
-    // setCurrentActionName(currentActionName);
-    // setProtocolName(currentProtocolName);
-    // setSelectedTokenFrom(SELECTABLE_TOKENS[0]);
-    // setSelectedTokenTo(SELECTABLE_TOKENS[1]);
-    // setSellAmount(sellAmount);
-    // setQuote(quote);
-
-    // setLockedBlocks(prevBlocks => [...prevBlocks, newLockedBlock]);
 
     setBlockedAction(true);
     console.log("newLockedBlock", newLockedBlock)
@@ -108,16 +99,17 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   };
 
   const handleActionChange = (value) => {
-
-    // const selectedActionKey = event.target.value;
-    console.log(currentActionName)
     setCurrentActionName(value);
-    
-    // onActionChange(selectedActionKey);
   };
 
+  const availableProtocols = useMemo(() => {
+    const action = ACTIONS[currentActionName];
+    if (!action || !action.availableProtocols) return [];
+    return action.availableProtocols;
+
+  }, [currentActionName])
+
   const handleProtocolChange = (value) => {
-    console.log("value>>", value);
     setProtocolName(value);
   };
 
@@ -130,7 +122,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     setSelectedTokenTo(selectableTokens[1]);
   }, [protocolName, selectableTokens]);
 
-  const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeInput = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!wallet) return;
     setErrorMessage('');
     const sellAmountValue = Number(event.target.value);
@@ -199,20 +191,63 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       console.log("2");
 
       const sellAmountValue = Number(event.target.value);
+      console.log("Sell Amount Value", sellAmountValue);
+      if (!sellAmountValue) return
+
+      const txb = new TransactionBlock();
+      const kriyadex = new Dex("https://fullnode.mainnet.sui.io:443");
+
+      console.log("currentActionName", currentActionName);
+      console.log("currentProtocolName", currentProtocolName);
+      console.log("selectedTokenFrom", selectedTokenFrom);
+      console.log("selectedTokenTo", selectedTokenTo);
+
+      const pool = getPoolByName(`${selectedTokenFrom.symbol}-${selectedTokenTo.symbol}`);
+      console.log("Pool", pool);
+
+      const inputTokenValue = processAmount(sellAmountValue.toString(), selectedTokenFrom.decimals)
+
+      let coinX = kriyadex.getExactCoinByAmount(pool.tokenXType, coinsXlist, BigInt(sellAmountValue), txb)
+      console.log("CoinX", coinX);
+
+
       // get the quote
+    } else if (currentProtocolName == PROTOCOLS['AFTERMATH'].name) {
+
+      const sellAmountValue = Number(event.target.value);
+      if (!sellAmountValue) return
+
+      const afSdk = new Aftermath("MAINNET");
+      await afSdk.init();
+
+      const router = afSdk.Router();
+
+      const updatedSellAmountValue = processAmount(sellAmountValue.toString(), selectedTokenFrom.decimals)
+
+      const fetchedRoute = await fetchAfterMathQuote({
+        sellAmountValue: updatedSellAmountValue,
+        router
+      })
+
+      console.log("Res", fetchedRoute);
+      if (fetchedRoute) {
+        const fetchedAmount = Number(fetchedRoute.coinOut.amount)
+        const updatedFetchAmount = refineAmount(fetchedAmount.toString(), selectedTokenTo.decimals)
+        setQuote(updatedFetchAmount);
+      }
+
     }
-    // setLoading(true);
   };
 
 
   const handleSwap = async () => {
     // if (!wallet || !sellAmount || !quote) return;
-    console.log(currentProtocolName,"swap with")
+    console.log(currentProtocolName, "swap with")
     setErrorMessage('');
     setSuccessMessage('');
     setLoading(true);
     if (protocolName === "NAVIPROTOCOL") {
-      
+
 
       try {
 
@@ -223,70 +258,70 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       try {
 
         const amountinstring = sellAmount.toString();
-        console.log(selectedTokenFrom.type,selectedTokenTo.type, true,"sd");
-        console.log(`${selectedTokenFrom.symbol}-${selectedTokenTo.symbol}`,"pool");
+        console.log(selectedTokenFrom.type, selectedTokenTo.type, true, "sd");
+        console.log(`${selectedTokenFrom.symbol}-${selectedTokenTo.symbol}`, "pool");
 
-    const txb: any = new TransactionBlock();
-    const kriyadex = new Dex("https://fullnode.mainnet.sui.io:443");
-    console.log(kriyadex,"kriyaddex")
-    const to_swap_amount = 1 * 10 ** 9;
-    const pool = getPoolByName(`${selectedTokenFrom.symbol}-${selectedTokenTo.symbol}`);
-    const justswap =  await kriyadex.swap(pool, selectedTokenFrom.type, txb.pure(sellAmount), txb.object(selectedTokenFrom.symbol), txb.pure(10 ** 9), txb);
-    
-    console.log(justswap);
+        const txb: any = new TransactionBlock();
+        const kriyadex = new Dex("https://fullnode.mainnet.sui.io:443");
+        console.log(kriyadex, "kriyaddex")
+        const to_swap_amount = 1 * 10 ** 9;
+        const pool = getPoolByName(`${selectedTokenFrom.symbol}-${selectedTokenTo.symbol}`);
+        const justswap = await kriyadex.swap(pool, selectedTokenFrom.type, txb.pure(sellAmount), txb.object(selectedTokenFrom.symbol), txb.pure(10 ** 9), txb);
 
-    const swapcall = await txb.moveCall({
-      target: "0xa0eba10b173538c8fecca1dff298e488402cc9ff374f8a12ca7758eebe830b66::spot_dex::swap_token_x",
-      arguments: [
-          txb.object(pool.objectId),
-          txb.object(selectedTokenFrom.symbol),
-          txb.pure(amountinstring),
-          txb.pure(10 ** 9),
-      ],
-      typeArguments: [
-          pool.tokenXType,
-          pool.tokenYType,
-      ],
-      });
+        console.log(justswap);
+
+        const swapcall = await txb.moveCall({
+          target: "0xa0eba10b173538c8fecca1dff298e488402cc9ff374f8a12ca7758eebe830b66::spot_dex::swap_token_x",
+          arguments: [
+            txb.object(pool.objectId),
+            txb.object(selectedTokenFrom.symbol),
+            txb.pure(amountinstring),
+            txb.pure(10 ** 9),
+          ],
+          typeArguments: [
+            pool.tokenXType,
+            pool.tokenYType,
+          ],
+        });
 
 
-      signAndExecuteTransaction(
-        {
-          transaction: txb,
-          chain: 'sui:mainnet',
-        },
-        {
-          onSuccess: (result) => {
-            console.log('executed transaction', result);
+        signAndExecuteTransaction(
+          {
+            transaction: txb,
+            chain: 'sui:mainnet',
           },
-        },
-      );
+          {
+            onSuccess: (result) => {
+              console.log('executed transaction', result);
+            },
+          },
+        );
 
       } catch (error) {
         console.error('Error during swap:', error);
       }
     } else if (currentProtocolName === "FLOWX") {
-      console.log(selectedTokenFrom,"yoi",selectedTokenTo)
+      console.log(selectedTokenFrom, "yoi", selectedTokenTo)
 
 
       const slippage = 2;
 
-        console.log(sellAmount,"sellAmount")
-        const amountinstring = sellAmount.toString();
-        console.log(selectedTokenFrom.type,selectedTokenTo.type,amountinstring,abortQuerySmartRef.current.signal, true,"sd");
-      const {paths,amountOut} = await getSmartRouting(selectedTokenFrom.type,selectedTokenTo.type,amountinstring,abortQuerySmartRef.current.signal, true)
-      console.log(paths,amountOut,"smart router gave us");
+      console.log(sellAmount, "sellAmount")
+      const amountinstring = sellAmount.toString();
+      console.log(selectedTokenFrom.type, selectedTokenTo.type, amountinstring, abortQuerySmartRef.current.signal, true, "sd");
+      const { paths, amountOut } = await getSmartRouting(selectedTokenFrom.type, selectedTokenTo.type, amountinstring, abortQuerySmartRef.current.signal, true)
+      console.log(paths, amountOut, "smart router gave us");
 
-      const txb = await txBuild(paths,slippage,amountinstring,amountOut,selectedTokenFrom.type,wallet);
-      console.log(txBuild,"txbuild >>")
+      const txb = await txBuild(paths, slippage, amountinstring, amountOut, selectedTokenFrom.type, wallet);
+      console.log(txBuild, "txbuild >>")
 
-      const feereq= await estimateGasFee(txb);
+      const feereq = await estimateGasFee(txb);
       console.log(feereq);
-      const { fee, amountOut:amountOutDev, pathsAmountOut } = feereq;
-      console.log(fee,"fee")
+      const { fee, amountOut: amountOutDev, pathsAmountOut } = feereq;
+      console.log(fee, "fee")
 
-      const tx = await txBuild(paths,slippage,amountinstring,amountOutDev,selectedTokenFrom.type,wallet,pathsAmountOut);
-      console.log(tx,"txBuild returns me this >>");
+      const tx = await txBuild(paths, slippage, amountinstring, amountOutDev, selectedTokenFrom.type, wallet, pathsAmountOut);
+      console.log(tx, "txBuild returns me this >>");
       tx.setSender(wallet!)
 
 
@@ -315,15 +350,20 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       //     chain: 'sui:devnet',
       //   },
       // );
-    } 
+    } else if (currentProtocolName === 'AFTERMATH') {
+      const afSdk = new Aftermath("MAINNET");
+      await afSdk.init();
+
+      const router = afSdk.Router();
+
+      const tx = await executeAfterMathSwap({ router });
+      console.log("Tx >>>>", tx);
+
+    }
   };
 
-  useEffect(() => {
-
-  }, [x]);
-
   const handlesubmit = async (actionname: string) => {
-    console.log(actionName,"Action name", currentActionName)
+    console.log(actionName, "Action name", currentActionName)
     if (currentActionName == "SWAP") {
       handleSwap();
     } else if (currentActionName == "Add_Liquidity") {
@@ -331,15 +371,68 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     }
   }
 
-  // Get available protocols for the current action
-  const getAvailableProtocols = (actionType: ActionTypes) => {
-    const action = ACTIONS[actionType];
-    if (!action || !action.availableProtocols) return [];
-    return action.availableProtocols;
-  };
 
-  // Filter protocols based on current action
-  const availableProtocols = getAvailableProtocols(currentActionName);
+  const [afterMathRoute, setAfterMathRoute] = useState<RouterCompleteTradeRoute | null>(null);
+
+  const fetchAfterMathQuote = async ({
+    sellAmountValue,
+    router
+  }: {
+    sellAmountValue: string,
+    router: Router
+  }) => {
+
+    try {
+      const addresses = [];
+      const afApi = new AftermathApi(suiClient, addresses, new IndexerCaller("MAINNET"),);
+
+      console.log("afApi", afApi);
+
+      const route = await router.getCompleteTradeRouteGivenAmountIn({
+        coinInType: selectedTokenFrom.type,
+        coinOutType: selectedTokenTo.type,
+        coinInAmount: BigInt(sellAmountValue),
+
+        referrer: "0x...",
+        externalFee: {
+          recipient: "0x...", // here we can add our smart contract address that can charge fess per txn
+          feePercentage: 0.01,
+        },
+      });
+
+      console.log("route", route);
+      setAfterMathRoute(route);
+      return route;
+    } catch (error) {
+      console.log("Error in AfterMath Quote fetching", error);
+      return null
+    }
+  }
+
+  const executeAfterMathSwap = async ({
+    router
+  }: {
+    router: Router
+  }) => {
+    try {
+      const tx = await router.getTransactionForCompleteTradeRouteV0({
+        walletAddress: wallet,
+        completeRoute: afterMathRoute,
+        slippage: 0.01,
+
+      });
+
+      console.log("Transaction", tx)
+      return tx;
+    } catch (error) {
+      console.log("Error in aftermath swap execution", error);
+      return null
+    }
+
+
+  }
+
+
 
   return (
     <div className={styles.block} >
@@ -366,9 +459,9 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
           </SelectContent>
         </Select>
 
-        <Select 
-          disabled={blockedAction} 
-          onValueChange={handleProtocolChange} 
+        <Select
+          disabled={blockedAction}
+          onValueChange={handleProtocolChange}
           value={currentProtocolName}
         >
           <SelectTrigger className="w-full">
@@ -389,27 +482,33 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
         </Select>
       </div>
 
+      <div className='flex flex-col items-center justify-center h-full p-2'>
+        <div className='flex items-start w-full mt-2 gap-4'>
+          <div className="flex flex-row">
+            <TokenChooser
+              blockedAction={blockedAction}
+              selectedToken={selectedTokenFrom}
+              setSelectedToken={setSelectedTokenFrom}
+              selectableTokens={selectableTokens}
+            />
+          </div>
 
-      <div className={cn("", styles.actionInputsWrapper)}>
-        <div className={styles.actionInputField}>
-          <TokenChooser
-            blockedAction={blockedAction}
-            selectedToken={selectedTokenFrom}
-            setSelectedToken={setSelectedTokenFrom}
-            selectableTokens={selectableTokens}
-          />
-          <Input
-            disabled={loading || blockedAction}
-            className="flex-1"
-            placeholder="Input amount"
-            color="gray.300"
-            height={"3rem"}
-            // borderRadius="md"
-            // borderColor="gray.300"
-            // _hover={{ borderColor: "gray.500" }}
-            // _focus={{ borderColor: "gray.500" }}
-            onChange={handleChangeInput}
-          />
+          <div className="flex flex-row flex-1">
+            <Input
+              disabled={loading || blockedAction}
+              className="flex-1"
+              placeholder="Input amount"
+              color="gray.300"
+              height={"3rem"}
+              // borderRadius="md"
+              // borderColor="gray.300"
+              // _hover={{ borderColor: "gray.500" }}
+              // _focus={{ borderColor: "gray.500" }}
+              onChange={handleChangeInput}
+            />
+          </div>
+
+
         </div>
 
 

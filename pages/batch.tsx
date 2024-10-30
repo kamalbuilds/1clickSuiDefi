@@ -1,6 +1,3 @@
-
-// Batch component
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import ActionBlock from '../components/action-block';
@@ -58,14 +55,27 @@ const Batch = () => {
   const renderConnected = () => {
     return (
       <div className={styles.container}>
+        <div className='flex gap-8'>
+          <Button onClick={addActionBlock} className="mt-8">
+            ➕ Action Block
+          </Button>
+          <Button onClick={() => removeActionBlock(actionBlocks.length)} className="mt-8 flex items-center justify-center">
+            ❌ Latest Block
+          </Button>
+          <Button onClick={() => {
+            setBatchActions(null)
+            setActionBlocks([initBlockState])
+          }} className="mt-8">
+            🗑️ Clear Batch
+          </Button>
+        </div>
         <Reorder.Group
           as="ul"
-          className={styles.actionsWrapper}
+          className='w-full flex justify-start items-start flex-nowrap overflow-auto pt-8 gap-10'
           axis="x"
           values={actionBlocks}
           onReorder={setActionBlocks}
           layoutScroll
-          style={{ overflowX: "scroll" }}
         >
           {actionBlocks.map((block) => (
             <Reorder.Item key={block.id} value={block}>
@@ -80,20 +90,6 @@ const Batch = () => {
             </Reorder.Item>
           ))}
         </Reorder.Group>
-        <div className='flex gap-8'>
-          <Button onClick={addActionBlock} className="mt-8">
-            ➕ Action Block
-          </Button>
-          <Button onClick={() => removeActionBlock(actionBlocks.length)} className="mt-8">
-            ❌ Latest Block
-          </Button>
-          <Button onClick={() => {
-            setBatchActions(null)
-            setActionBlocks([initBlockState])
-          }} className="mt-8">
-            🗑️ Clear Batch
-          </Button>
-        </div>
       </div>
     )
   }

@@ -38,16 +38,7 @@
   height: 100%;
 }
 
-.actionInputsWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 20px;
-}
-
-.actionInputsWrapper > * {
+.actionInputsWrapper>* {
   margin-top: 20px;
 }
 
@@ -56,6 +47,7 @@
   align-items: flex-start;
   width: 100%;
 }
-.actionInputField > * {
+
+.actionInputField>* {
   margin-right: 10px;
 }

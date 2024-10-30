@@ -28,7 +28,7 @@
     "@suiet/wallet-kit": "^0.2.24",
     "@tanstack/react-query": "^5.40.0",
     "@typus/typus-sdk": "^1.2.84-dapp-kit",
-    "aftermath-ts-sdk": "^1.1.62",
+    "aftermath-ts-sdk": "^1.1.95",
     "autoprefixer": "^10.4.17",
     "buffer": "^6.0.3",
     "class-variance-authority": "^0.7.0",
