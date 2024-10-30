@@ -1,4 +1,3 @@
-
 import styles from "../styles/action-block.module.css";
 import { Input } from "../components/ui/input";
 import { Button } from "./ui/button";
@@ -332,6 +331,16 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     }
   }
 
+  // Get available protocols for the current action
+  const getAvailableProtocols = (actionType: ActionTypes) => {
+    const action = ACTIONS[actionType];
+    if (!action || !action.availableProtocols) return [];
+    return action.availableProtocols;
+  };
+
+  // Filter protocols based on current action
+  const availableProtocols = getAvailableProtocols(currentActionName);
+
   return (
     <div className={styles.block} >
       <p className={styles.protocolName}>{currentProtocolName}</p>
@@ -352,24 +361,29 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
                 <div key={key}>
                   <SelectItem value={key}>{ACTIONS[key].name}</SelectItem>
                 </div>
-              )
-              )}
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
 
-        <Select disabled={blockedAction} onValueChange={handleProtocolChange} value={currentProtocolName}>
+        <Select 
+          disabled={blockedAction} 
+          onValueChange={handleProtocolChange} 
+          value={currentProtocolName}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Protocol" />
             <ChevronDown className="h-4 w-4 opacity-50" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {Object.keys(PROTOCOLS).map((key) => (
-                <div key={key}>
-                  <SelectItem value={key}> {PROTOCOLS[key].name}</SelectItem>
-                </div>
-              ))}
+              {Object.keys(PROTOCOLS)
+                .filter(key => availableProtocols.includes(key))
+                .map((key) => (
+                  <div key={key}>
+                    <SelectItem value={key}>{PROTOCOLS[key].name}</SelectItem>
+                  </div>
+                ))}
             </SelectGroup>
           </SelectContent>
         </Select>

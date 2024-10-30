@@ -174,6 +174,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any } = {
     type: ActionTypes.TRANSFER,
     name: 'Transfer',
     availableProtocols: [
+      
     ],
   },
 };
