@@ -157,6 +157,7 @@ export const ACTIONS: { [key in keyof typeof ActionTypes]?: any } = {
       ProtocolNames.NAVI,
       ProtocolNames.KRIYADEX,
       ProtocolNames.AFTERMATH,
+      ProtocolNames.FLOWX,
     ],
   },
   [ActionTypes.ADD_LIQUIDITY]: {

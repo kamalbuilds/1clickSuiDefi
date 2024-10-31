@@ -13,25 +13,23 @@ import {
 import { ACTIONS, ActionTypes, PROTOCOLS, ProtocolNames } from '../constants/constants';
 import TokenChooser from "./token-chooser";
 import { IoIosAddCircleOutline, IoIosArrowDown } from "react-icons/io";
-import { CiCircleMinus } from "react-icons/ci";
 import { SELECTABLE_TOKENS } from "../constants/constants";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { motion, useMotionValue } from "framer-motion"
+import { useMotionValue } from "framer-motion"
 import { SUITOKENS } from "../constants/Suitokens";
 import { Naviprotocol } from "../hooks/Naviprotocol";
 import { WalletProvider, useAccounts, useSignAndExecuteTransaction, useSignTransaction, useSuiClient, useWallets } from "@mysten/dapp-kit";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { txBuild, estimateGasFee, getSmartRouting } from "@flowx-pkg/ts-sdk";
-import { getFullnodeUrl } from "../constants/constants";
-
 import { TransactionBlock } from "@mysten/sui.js/transactions";
 import { Dex } from "kriya-dex-sdk";
 import { getPoolByName } from "../constants/constants";
 import { Pool, PoolConfig } from "navi-sdk/dist/types";
 import { processAmount, refineAmount } from "@/helpers";
 import { Aftermath, AftermathApi, IndexerCaller, Router, RouterCompleteTradeRoute } from "aftermath-ts-sdk";
-import { suiClient } from "@/protocolstrategies/common/constants";
+import { AggregatorQuoter, Coin, GetRoutesResult, TradeBuilder } from '@flowx-finance/sdk';
+
 
 const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange, setBatchActions }) => {
   const x = useMotionValue(0);
@@ -58,7 +56,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const { mutateAsync: signTransaction } = useSignTransaction();
   const suiclient = useSuiClient();
-  // console.log(suiclient, "sui clcll")
+  console.log(suiclient, "sui client ")
   const accounts = useAccounts();
   const wallet = accounts[0]?.address;
   // console.log(wallet, "wealle")
@@ -236,6 +234,33 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
         setQuote(updatedFetchAmount);
       }
 
+    } else if (currentProtocolName == PROTOCOLS['FLOWX'].name) {
+
+      const sellAmountValue = Number(event.target.value);
+      if (!sellAmountValue) return
+
+      const quoter = new AggregatorQuoter('mainnet');
+
+      const updatedSellAmountValue = processAmount(sellAmountValue.toString(), selectedTokenFrom.decimals)
+
+      const routes = await fetchFlowXRoute({
+        updatedSellAmountValue,
+        quoter
+      });
+
+      console.log("Routes >>>", routes);
+      if (!routes) {
+        alert('No routes found')
+        return
+      }
+
+      if (routes) {
+        const fetchedAmount = Number(routes.amountOut)
+        const updatedFetchAmount = refineAmount(fetchedAmount.toString(), selectedTokenTo.decimals)
+        setQuote(updatedFetchAmount);
+      }
+
+
     }
   };
 
@@ -371,6 +396,69 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
     }
   }
 
+  const [flowXRoute, setFlowXRoute] = useState<GetRoutesResult<Coin, Coin> | null>(null);
+
+  const fetchFlowXRoute = async ({
+    updatedSellAmountValue,
+    quoter
+  }: {
+    updatedSellAmountValue: string,
+    quoter: AggregatorQuoter
+  }) => {
+    try {
+      // TODO: @kamal we can add commission charges here
+      const params = {
+        tokenIn: selectedTokenFrom.type,
+        tokenOut: selectedTokenTo.type,
+        amountIn: updatedSellAmountValue,
+        includeSources: null,
+        excludeSources: null,
+        commission: null, //optional, and will be explain later
+      };
+
+      const routes = await quoter.getRoutes(params);
+      setFlowXRoute(routes)
+      return routes
+    } catch (error) {
+      console.log("Error in fetching flowX Route", error);
+      return null;
+
+    }
+
+  }
+
+  const executeFlowXSwap = async () => {
+    try {
+      if (!flowXRoute) return
+      const tradeBuilder = new TradeBuilder('mainnet', flowXRoute.routes);
+      const trade = tradeBuilder
+        .sender(wallet)
+        .amountIn(flowXRoute.amountIn)
+        .amountOut(flowXRoute.amountOut) // Estimate amount out, usual get from quoter
+        .slippage((1 / 100) * 1e6) // Slippage 1%
+        .deadline(Date.now() + 3600) // 1 hour from now
+        .commission(null) // Commission will be explain later
+        .build();
+      console.log("trade", trade); // Output: Trade object with configured parameters
+
+      console.log("SUI Client", suiclient);
+
+      const txb = new TransactionBlock();
+
+      // const txn = await trade.buildTransaction({
+      //   client: suiclient
+      // })
+
+      // console.log("txn", txn);
+
+
+
+    } catch (error) {
+      console.log("Error in executing FlowXSwap", error);
+
+    }
+  }
+
 
   const [afterMathRoute, setAfterMathRoute] = useState<RouterCompleteTradeRoute | null>(null);
 
@@ -384,7 +472,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
 
     try {
       const addresses = [];
-      const afApi = new AftermathApi(suiClient, addresses, new IndexerCaller("MAINNET"),);
+      const afApi = new AftermathApi(suiclient, addresses, new IndexerCaller("MAINNET"),);
 
       console.log("afApi", afApi);
 
@@ -441,6 +529,8 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       <div className='text-xl font-semibold tracking-tight'>
         <h3 className={styles.actionName}>{currentActionName}</h3>
       </div>
+
+      <Button onClick={executeFlowXSwap}>Execute Flow Swap</Button>
 
       <div className="flex flex-col gap-8 mt-12 ">
         <Select disabled={blockedAction} onValueChange={handleActionChange} value={currentActionName}>
