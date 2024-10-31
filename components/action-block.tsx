@@ -28,8 +28,43 @@ import { getPoolByName } from "../constants/constants";
 import { Pool, PoolConfig } from "navi-sdk/dist/types";
 import { processAmount, refineAmount } from "@/helpers";
 import { Aftermath, AftermathApi, IndexerCaller, Router, RouterCompleteTradeRoute } from "aftermath-ts-sdk";
-import { AggregatorQuoter, Coin, GetRoutesResult, TradeBuilder } from '@flowx-finance/sdk';
+import { AggregatorQuoter, Coin, GetRoutesResult, TradeBuilder, Route } from '@flowx-finance/sdk';
 
+async function simulateFlowxGivenAmountIn(
+  coinInType: string,
+  coinOutType: string,
+  amountIn: bigint,
+) {
+  const quoter = new AggregatorQuoter("mainnet");
+  return await quoter.getRoutes({
+    tokenIn: coinInType,
+    tokenOut: coinOutType,
+    amountIn: amountIn.toString(),
+  });
+}
+
+async function executeFlowxSwap(
+  tx: any, // here Transaction should come from @mysten/sui.js/transactions but its import is showing error
+  client: any,
+  inputs: {
+    routes: Route<Coin, Coin>[];
+    coinIn: any;
+    slippage: number;
+  }
+) {
+  const tradeBuilder = new TradeBuilder("mainnet", inputs.routes);
+  const coinOut = await tradeBuilder
+    .slippage(inputs.slippage)
+    .build()
+    .swap({
+      client,
+      tx,
+      coinIn: inputs.coinIn,
+    });
+
+  if (!coinOut) throw new Error("Failed to build the tx from FlowX router");
+  return coinOut;
+}
 
 const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange, setBatchActions }) => {
   const x = useMotionValue(0);
@@ -266,8 +301,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
 
 
   const handleSwap = async () => {
-    // if (!wallet || !sellAmount || !quote) return;
-    console.log(currentProtocolName, "swap with")
+    if (!wallet || !sellAmount || !quote) return;
     setErrorMessage('');
     setSuccessMessage('');
     setLoading(true);
@@ -329,7 +363,7 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       console.log(selectedTokenFrom, "yoi", selectedTokenTo)
 
 
-      const slippage = 2;
+
 
       console.log(sellAmount, "sellAmount")
       const amountinstring = sellAmount.toString();
@@ -337,17 +371,66 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
       const { paths, amountOut } = await getSmartRouting(selectedTokenFrom.type, selectedTokenTo.type, amountinstring, abortQuerySmartRef.current.signal, true)
       console.log(paths, amountOut, "smart router gave us");
 
-      const txb = await txBuild(paths, slippage, amountinstring, amountOut, selectedTokenFrom.type, wallet);
-      console.log(txBuild, "txbuild >>")
 
-      const feereq = await estimateGasFee(txb);
-      console.log(feereq);
-      const { fee, amountOut: amountOutDev, pathsAmountOut } = feereq;
-      console.log(fee, "fee")
+          const txb = new TransactionBlock();
+          
+          // Convert sellAmount to bigint with proper decimals
+          const amountIn = BigInt(processAmount(sellAmount.toString(), selectedTokenFrom.decimals));
+          
+          // Get routes
+          const queryResult = await simulateFlowxGivenAmountIn(
+            selectedTokenFrom.type,
+            selectedTokenTo.type,
+            amountIn
+          );
+  
+          if (!queryResult || !queryResult.routes.length) {
+            throw new Error("No routes found for swap");
+          }
+  
+          // Execute swap
+          const slippage = (0.5 / 100) * 1e6; // 0.5% slippage
+          const coinIn = txb.pure(amountIn);
+  
+          await executeFlowxSwap(txb, suiclient, {
+            routes: queryResult.routes,
+            slippage,
+            coinIn,
+          });
+  
+          // Execute the transaction
+          signAndExecuteTransaction(
+            {
+              transaction: txb,
+              chain: 'sui:mainnet',
+            },
+            {
+              onSuccess: (result) => {
+                console.log('Swap executed successfully:', result);
+                setSuccessMessage('Swap completed successfully!');
+                setLoading(false);
+              },
+              onError: (error) => {
+                console.error('Swap failed:', error);
+                setErrorMessage('Swap failed. Please try again.');
+                setLoading(false);
+              },
+            },
+          );
+        
+      
+      // @abhishek code below
+      // const txb = await txBuild(paths, slippage, amountinstring, amountOut, selectedTokenFrom.type, wallet);
+      // console.log(txBuild, "txbuild >>")
 
-      const tx = await txBuild(paths, slippage, amountinstring, amountOutDev, selectedTokenFrom.type, wallet, pathsAmountOut);
-      console.log(tx, "txBuild returns me this >>");
-      tx.setSender(wallet!)
+      // const feereq = await estimateGasFee(txb);
+      // console.log(feereq);
+      // const { fee, amountOut: amountOutDev, pathsAmountOut } = feereq;
+      // console.log(fee, "fee")
+
+      // const tx = await txBuild(paths, slippage, amountinstring, amountOutDev, selectedTokenFrom.type, wallet, pathsAmountOut);
+      // console.log(tx, "txBuild returns me this >>");
+      // tx.setSender(wallet!)
 
 
 
