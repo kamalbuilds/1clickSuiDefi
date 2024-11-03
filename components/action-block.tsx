@@ -29,6 +29,9 @@ import { Pool, PoolConfig } from "navi-sdk/dist/types";
 import { processAmount, refineAmount } from "@/helpers";
 import { Aftermath, AftermathApi, IndexerCaller, Router, RouterCompleteTradeRoute } from "aftermath-ts-sdk";
 import { AggregatorQuoter, Coin, GetRoutesResult, TradeBuilder, Route } from '@flowx-finance/sdk';
+import { useWalrus } from '@/hooks/useWalrus';
+import { type ActionBlock, type Strategy } from '@/types/strategy';
+import { v4 as uuidv4 } from 'uuid';
 
 async function simulateFlowxGivenAmountIn(
   coinInType: string,
@@ -66,7 +69,21 @@ async function executeFlowxSwap(
   return coinOut;
 }
 
-const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChange, setBatchActions }) => {
+interface ActionBlockProps {
+  actionName?: string;
+  protocolName?: string;
+  onActionChange?: (value: string) => void;
+  onProtocolChange?: (value: string) => void;
+  setBatchActions: React.Dispatch<React.SetStateAction<ActionBlock[] | undefined>>;
+}
+
+const ActionBlock = ({ 
+  actionName, 
+  protocolName, 
+  onActionChange, 
+  onProtocolChange, 
+  setBatchActions 
+}: ActionBlockProps) => {
   const x = useMotionValue(0);
 
   const [blockedAction, setBlockedAction] = useState(false);
@@ -97,33 +114,34 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
   // console.log(wallet, "wealle")
 
   // console.log(currentActionName, "current action name")
-  const [lockedBlocks, setLockedBlocks] = useState([]);
+  const [lockedBlocks, setLockedBlocks] = useState<ActionBlock[]>([]);
 
   const abortQuerySmartRef = useRef(new AbortController());
+  const [batchActions, setBatchActionsState] = useState<ActionBlock[]>([]);
+
   const handleLockAction = () => {
+    if (!selectedTokenFrom || !selectedTokenTo || !sellAmount) {
+      setErrorMessage('Please fill in all required fields');
+      return;
+    }
+
     const newLockedBlock = {
+      id: uuidv4(),
       actionName: currentActionName,
       protocolName: currentProtocolName,
-      data: {
-        selectedTokenFrom: selectedTokenFrom,
-        selectedTokenTo: selectedTokenTo,
-        sellAmount: sellAmount,
-        quote: quote
-      }
+      tokenFrom: selectedTokenFrom,
+      tokenTo: selectedTokenTo,
+      amount: sellAmount,
+      quote: quote,
+      timestamp: Date.now()
     };
 
     setBlockedAction(true);
-    console.log("newLockedBlock", newLockedBlock)
+    
+    setBatchActionsState(prev => [...prev, newLockedBlock]);
+    setBatchActions(prev => prev ? [...prev, newLockedBlock] : [newLockedBlock]);
 
-    setBatchActions(prevActions => {
-      if (prevActions) {
-        return [...prevActions, newLockedBlock]
-      } else {
-        return [newLockedBlock]
-      }
-    }
-    );
-
+    setSuccessMessage('Block locked successfully');
   };
 
   const handleGetLockedBlocksData = () => {
@@ -603,7 +621,39 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
 
   }
 
+  const [strategyName, setStrategyName] = useState<string>("");
+  const [strategyDescription, setStrategyDescription] = useState<string>("");
+  const walrus = useWalrus();
 
+  const handleSaveStrategy = async () => {
+    if (!batchActions?.length) {
+      setErrorMessage('No actions to save');
+      return;
+    }
+
+    try {
+      const strategy = {
+        id: uuidv4(),
+        name: strategyName || `Strategy ${Date.now()}`,
+        description: strategyDescription,
+        blocks: batchActions,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      };
+
+      await walrus.storeStrategy(strategy);
+      setSuccessMessage('Strategy saved successfully');
+      
+      // Reset form
+      setBatchActions([]);
+      setStrategyName('');
+      setStrategyDescription('');
+      setBlockedAction(false);
+    } catch (error) {
+      setErrorMessage('Failed to save strategy');
+      console.error(error);
+    }
+  };
 
   return (
     <div className={styles.block} >
@@ -715,13 +765,69 @@ const ActionBlock = ({ actionName, protocolName, onActionChange, onProtocolChang
         }
 
         <div>
-          {loading ? <p style={{ color: 'green' }}>Loading...</p> : <Button style={{ color: 'green' }} onClick={() => handlesubmit(currentActionName)}>{currentActionName}</Button>}
+          {loading ? (
+            <p style={{ color: 'green' }}>Loading...</p> 
+          ) : (
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => handlesubmit(currentActionName)}
+              >
+                {currentActionName}
+              </Button>
+              <Button 
+                onClick={handleLockAction}
+                variant="secondary"
+              >
+                Lock Block
+              </Button>
+            </div>
+          )}
           {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
           {successMessage && <p style={{ color: 'green' }}>Success</p>}
         </div>
 
-        <Button disabled={blockedAction} onClick={handleLockAction}>Lock This Action 🔒</Button>
+        {batchActions?.length > 0 && (
+          <div className="mt-4 space-y-4">
+            <h3 className="text-lg font-semibold">Strategy Details</h3>
+            
+            <Input
+              placeholder="Strategy Name"
+              value={strategyName}
+              onChange={(e) => setStrategyName(e.target.value)}
+            />
+            
+            <Input
+              placeholder="Strategy Description (optional)"
+              value={strategyDescription}
+              onChange={(e) => setStrategyDescription(e.target.value)}
+            />
+            
+            <div className="space-y-2">
+              <h4 className="font-medium">Locked Blocks ({batchActions.length})</h4>
+              {batchActions.map((block, index) => (
+                <div key={block.id} className="p-3 border rounded-md">
+                  <p className="font-medium">{block.protocolName} - {block.actionName}</p>
+                  <p className="text-sm text-gray-600">
+                    {block.tokenFrom.symbol} → {block.tokenTo.symbol}
+                  </p>
+                  <p className="text-sm text-gray-600">Amount: {block.amount}</p>
+                </div>
+              ))}
+            </div>
 
+            <div className="flex gap-4">
+              <Button onClick={handleLockAction}>
+                Add Another Block
+              </Button>
+              <Button 
+                onClick={handleSaveStrategy}
+                variant="secondary"
+              >
+                Save Strategy
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
       <Button onClick={handleGetLockedBlocksData}>Execute Locked Blocks 🔥</Button>
     </div>
