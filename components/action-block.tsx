@@ -70,19 +70,19 @@ async function executeFlowxSwap(
 }
 
 interface ActionBlockProps {
-  actionName?: string;
-  protocolName?: string;
-  onActionChange?: (value: string) => void;
-  onProtocolChange?: (value: string) => void;
-  setBatchActions: React.Dispatch<React.SetStateAction<ActionBlock[] | undefined>>;
+  actionName: string;
+  protocolName: string;
+  onActionChange: (value: string) => void;
+  onProtocolChange: (value: string) => void;
+  onLockBlock: (blockData: any) => void;
 }
 
-const ActionBlock = ({ 
-  actionName, 
-  protocolName, 
-  onActionChange, 
-  onProtocolChange, 
-  setBatchActions 
+const ActionBlock = ({
+  actionName,
+  protocolName,
+  onActionChange,
+  onProtocolChange,
+  onLockBlock
 }: ActionBlockProps) => {
   const x = useMotionValue(0);
 
@@ -119,29 +119,25 @@ const ActionBlock = ({
   const abortQuerySmartRef = useRef(new AbortController());
   const [batchActions, setBatchActionsState] = useState<ActionBlock[]>([]);
 
-  const handleLockAction = () => {
+  const handleLockBlock = () => {
     if (!selectedTokenFrom || !selectedTokenTo || !sellAmount) {
       setErrorMessage('Please fill in all required fields');
       return;
     }
 
-    const newLockedBlock = {
-      id: uuidv4(),
-      actionName: currentActionName,
+    const blockData = {
+      id: Date.now(),
       protocolName: currentProtocolName,
+      actionName: currentActionName,
       tokenFrom: selectedTokenFrom,
       tokenTo: selectedTokenTo,
       amount: sellAmount,
-      quote: quote,
-      timestamp: Date.now()
+      quote: quote
     };
 
-    setBlockedAction(true);
-    
-    setBatchActionsState(prev => [...prev, newLockedBlock]);
-    setBatchActions(prev => prev ? [...prev, newLockedBlock] : [newLockedBlock]);
-
+    onLockBlock(blockData);
     setSuccessMessage('Block locked successfully');
+    setBlockedAction(true);
   };
 
   const handleGetLockedBlocksData = () => {
@@ -764,70 +760,24 @@ const ActionBlock = ({
           )
         }
 
-        <div>
-          {loading ? (
-            <p style={{ color: 'green' }}>Loading...</p> 
-          ) : (
-            <div className="flex gap-2">
-              <Button 
-                onClick={() => handlesubmit(currentActionName)}
-              >
-                {currentActionName}
-              </Button>
-              <Button 
-                onClick={handleLockAction}
-                variant="secondary"
-              >
-                Lock Block
-              </Button>
-            </div>
-          )}
-          {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-          {successMessage && <p style={{ color: 'green' }}>Success</p>}
+        <div className="flex gap-2 mt-4">
+          <Button 
+            onClick={() => handlesubmit(currentActionName)}
+            disabled={blockedAction}
+          >
+            {currentActionName}
+          </Button>
+          <Button 
+            onClick={handleLockBlock}
+            variant="secondary"
+            disabled={blockedAction}
+          >
+            Lock Block
+          </Button>
         </div>
 
-        {batchActions?.length > 0 && (
-          <div className="mt-4 space-y-4">
-            <h3 className="text-lg font-semibold">Strategy Details</h3>
-            
-            <Input
-              placeholder="Strategy Name"
-              value={strategyName}
-              onChange={(e) => setStrategyName(e.target.value)}
-            />
-            
-            <Input
-              placeholder="Strategy Description (optional)"
-              value={strategyDescription}
-              onChange={(e) => setStrategyDescription(e.target.value)}
-            />
-            
-            <div className="space-y-2">
-              <h4 className="font-medium">Locked Blocks ({batchActions.length})</h4>
-              {batchActions.map((block, index) => (
-                <div key={block.id} className="p-3 border rounded-md">
-                  <p className="font-medium">{block.protocolName} - {block.actionName}</p>
-                  <p className="text-sm text-gray-600">
-                    {block.tokenFrom.symbol} → {block.tokenTo.symbol}
-                  </p>
-                  <p className="text-sm text-gray-600">Amount: {block.amount}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-4">
-              <Button onClick={handleLockAction}>
-                Add Another Block
-              </Button>
-              <Button 
-                onClick={handleSaveStrategy}
-                variant="secondary"
-              >
-                Save Strategy
-              </Button>
-            </div>
-          </div>
-        )}
+        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        {successMessage && <p className="text-green-500">{successMessage}</p>}
       </div>
       <Button onClick={handleGetLockedBlocksData}>Execute Locked Blocks 🔥</Button>
     </div>
